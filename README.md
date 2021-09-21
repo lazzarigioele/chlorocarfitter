@@ -1,4 +1,6 @@
-This is chlorocarfitter, a tool for the quantification of pigments in acetonic solution. What follows gives you a brief description of its usage. 
+This is chlorocarfitter, a tool for the quantification of pigments in acetonic solution. It's available for Windows, MacOS, and Linux. What follows gives you a brief description of its usage. 
+
+![screenshot-v1.0.png](icons/screenshot-v1.0.png)
 
 ### Installing
 
