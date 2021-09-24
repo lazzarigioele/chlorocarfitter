@@ -4,7 +4,7 @@ This is chlorocarfitter, a tool for the quantification of pigments in acetonic s
 
 ### Installing
 
-Go to <www.github.com/lazzarigioele/chlorocarfitter/releases> and selected the executable according to your operating system. Windows 10+, MacOS 11+, and Ubuntu 18+ are supported (64bit version). Double-click on the executable to open the application. Note: on MacOS you could see the message "cannot be opened because the developer cannot be verified". In this case, right click on the .app and select "Open", than confirm.
+Go to <www.github.com/lazzarigioele/chlorocarfitter/releases> and selected the executable according to your operating system. Windows 10+, MacOS 11+, and Ubuntu 18+ are supported (64bit version). Double-click on the executable to open the application. Note: on MacOS you could see the message "cannot be opened because the developer cannot be verified". In this case, right click on the .app and select "Open", than confirm. Note: on Linux the bin file should start with a double-click; anyway, you could have to mark the .bin file as "executable" and then launch it from the command line.
 
 ### Loading of samples
 
