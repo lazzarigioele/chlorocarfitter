@@ -8,7 +8,7 @@ Go to <www.github.com/lazzarigioele/chlorocarfitter/releases> and selected the e
 
 ### Loading of samples
 
-First, load an Excel file or a .CSV file containing all your samples. Excel files must have the `.xlsx` extension (Excel 2007 and newer). The file to load must contain the wavelengths in the first column, followed by all the individual samples. The first row must contain the labels. Do not include spectroscopy blanks into this file. The `testfiles` folder in GitHub contains several .CSV and .xlsx example files to test Chlorocarfitter. 
+First, load an Excel file or a .CSV file containing all your samples. Excel files must have the `.xlsx` extension (Excel 2007 and newer). The file to load must contain the wavelengths in the first column, followed by all the individual samples. The first row must contain the labels. The label of the first column must be "nm". Do not include spectroscopy blanks into this file. The `testfiles` folder in GitHub contains several .CSV and .xlsx example files to test Chlorocarfitter. 
 
 What follow is an extract of an example .CSV file:
 
