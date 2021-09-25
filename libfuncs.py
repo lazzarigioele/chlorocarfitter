@@ -175,7 +175,7 @@ def loadXLSX(file):
 def saveCSV(datasets, standards, algo, file_path, progress):
         
     file = open(file_path, "w")
-    header = ["Sample", "Chl/Car", "Chl a/b", "Chl [uM]", "Car [uM]", "Chl a [uM]", "Chl b [uM]", 
+    header = ["Sample", "Chl a/b", "Chl/Car", "Chl [uM]", "Car [uM]", "Chl a [uM]", "Chl b [uM]", 
               "Beta 80 [uM]", "Lute 80 [uM]", "Neo 80 [uM]", "Viola 80 [uM]", "Zea 80 [uM]",
               "Chl a 70 [uM]", "Chl a 90 [uM]", "Chl b 70 [uM]", "Chl b 90 [uM]"]
     writer = csv.DictWriter(file, fieldnames= header)  
@@ -191,8 +191,8 @@ def saveCSV(datasets, standards, algo, file_path, progress):
         car_concents, car_comps = fitterCar(dataset, standards, chl_fit, algo)
         car_conc, car_fit = compsAdder(car_concents[0:5], car_comps[0:5], "Car fit")
                                                  
-        writer.writerow({"Sample" : dataset.label, "Chl/Car": round(chl_conc/car_conc, 3),
-                         "Chl a/b": round(chl_a_conc/chl_b_conc, 3), "Chl [uM]": round(chl_conc, 3),
+        writer.writerow({"Sample" : dataset.label, "Chl a/b": round(chl_a_conc/chl_b_conc, 3),
+                         "Chl/Car": round(chl_conc/car_conc, 3), "Chl [uM]": round(chl_conc, 3),
                          "Car [uM]": round(car_conc, 3), "Chl a [uM]": round(chl_a_conc, 3),
                          "Chl b [uM]": round(chl_b_conc, 3), "Beta 80 [uM]": round(car_concents[0], 3),
                          "Lute 80 [uM]": round(car_concents[1], 3), "Neo 80 [uM]": round(car_concents[2], 3),
