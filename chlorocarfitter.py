@@ -46,7 +46,7 @@ class MainFrame(tkinter.ttk.Frame):
         self.datasets_filename = "None"
         
         # create plots variable (only p1 at launch):
-        self.p1 = ObjPlot(self.frame_canvas, bg= "#ffffff", labelX = "nm", labelY = "au", pixelWidth = 800, pixelHeight = 400);
+        self.p1 = ObjPlot(self.frame_canvas, bg= "#ffffff", labelX = "nm", labelY = "au", pixelWidth = 800, pixelHeight = 400)
         self.p1.grid(row=1, column = 1, columnspan=2, sticky="WENS")
         self.p2, self.p3 = None, None
         tkinter.Grid.rowconfigure(self.frame_canvas, 1, weight=1)
@@ -293,6 +293,7 @@ class MainFrame(tkinter.ttk.Frame):
         self.datasets = copy.deepcopy(self.datasets_backup)
         self.doComboManipulations()
         
+        self.p1.title = ""
         self.p1.cleanPlot()
         my_selection = self.list_file.curselection() 
         for i in my_selection:
@@ -313,18 +314,20 @@ class MainFrame(tkinter.ttk.Frame):
        
     def onFitting(self):
         
+        # if the user didn't any sample yet
         if (self.datasets_backup == []):
             self.string_status.set("First load samples!")
             return
         
+        # if Porra is selected, exit from onFitting()
         if self.combo_algo.get() == "Porra":
             self.onPorra()
             return
         
+        # create p2 and p3 if needed, and activate button_hide
         if (self.p2 == None and self.p3 == None):
             self.p2 = ObjPlot(self.frame_canvas, beginX=350, endX=550, title="Carotenoids fit", bg ="#ffffff", labelX = "nm", labelY = "au", pixelHeight = 300, xTicks = 6, yTicks = 3);
             self.p2.grid(row=2, column = 1, sticky="WENS")
-                
             self.p3 = ObjPlot(self.frame_canvas, beginX=590, endX=700, title="Chlorophylls fit", bg ="#ffffff", labelX = "nm", labelY = "au", pixelHeight = 300, xTicks = 6, yTicks = 3);
             self.p3.grid(row=2, column = 2, sticky="WENS")
                 
@@ -333,53 +336,71 @@ class MainFrame(tkinter.ttk.Frame):
             
             self.button_hide["state"] = "active"
         
+
         self.string_status.set("Fitting..."); self.label_status.update_idletasks()
         
+
+        # take fresh datapoints, but avoid red peak normalization
         self.datasets = copy.deepcopy(self.datasets_backup)
         self.doComboManipulations(isFitting= True) # isFitting=False only when plotting
         
-        self.p2.cleanPlot()
-        self.p3.cleanPlot()
-        self.text_results.configure(state="normal") # Enables the Text widget to be programmatically filled.
-        self.text_results.delete("1.0", "end")
         
+        # take the choosen sample
         choosen = self.datasets[self.combo_fitter.current()]
         choosen.changeColor("gray60")
-        self.text_results.insert("end", choosen.label + ": \n\n")
         
+        
+        # calculate contributions 
         chl_concents, chl_comps = fitterChl(choosen, self.standards, self.combo_algo.get())
-        chl_a_conc, chl_a_comp = compsAdder(chl_concents[0:2], chl_comps[0:2], "Chl a", color = "SteelBlue4")
-        chl_b_conc, chl_b_comp = compsAdder(chl_concents[2:4], chl_comps[2:4], "Chl b", color = "green4")
+        chl_a_conc, chl_a_comp = compsAdder(chl_concents[0:2], chl_comps[0:2], "Chl a fit", color = "SteelBlue4")
+        chl_b_conc, chl_b_comp = compsAdder(chl_concents[2:4], chl_comps[2:4], "Chl b fit", color = "green4")
         chl_conc, chl_fit = compsAdder(chl_concents[0:4], chl_comps[0:4], "Chl fit", color = "DarkOliveGreen3")
         car_concents, car_comps = fitterCar(choosen, self.standards, chl_fit, self.combo_algo.get())
         car_conc, car_fit = compsAdder(car_concents[0:5], car_comps[0:5], "Car fit", color = "tomato")
-        
-        self.p3.loadLine(choosen)
         choosen_subtracted = choosen.subtract(chl_fit, choosen.label + " sub", color = "gray60")
-        self.p2.loadLine(choosen_subtracted)
+        tot_conc, tot_fit = compsAdder([chl_conc, car_conc], [chl_fit, car_fit], "Total fit", color = "brown")
         
+
+        # clean and fill p1
+        self.p1.title = "Total fit"
+        self.p1.cleanPlot()
+        self.p1.loadLine(choosen)
+        self.p1.loadLine(chl_a_comp)
+        self.p1.loadLine(chl_b_comp)
+        self.p1.loadLine(car_fit)
+        self.p1.loadLine(tot_fit)
+        self.p1.updatePlot()
+        # clean and fill p3
+        self.p3.cleanPlot()
+        self.p3.loadLine(choosen)
+        self.p3.loadLine(chl_a_comp)
+        self.p3.loadLine(chl_b_comp)
+        self.p3.loadLine(chl_fit)
+        self.p3.updatePlot()
+        for i in range(len(chl_comps)): self.p3.loadLine(chl_comps[i])
+        # clean and fill p2
+        self.p2.cleanPlot()
+        self.p2.loadLine(choosen_subtracted)
+        self.p2.loadLine(car_fit)
+        for i in range(len(car_comps)): self.p2.loadLine(car_comps[i])
+        self.p2.updatePlot()
+        
+
+        # clean and fill text_results
+        self.text_results.configure(state="normal") # Enables the Text widget to be programmatically filled.
+        self.text_results.delete("1.0", "end")
+        self.text_results.insert("end", choosen.label + ": \n\n")
         self.text_results.insert("end", "Chl a/b: " + str(round(chl_a_conc/chl_b_conc, 3)) + "\n")
         self.text_results.insert("end", "Chl/Car: " + str(round(chl_conc/car_conc, 3)) + "\n\n")
-        
         self.text_results.insert("end", "Chl a [uM]: " + str(round(chl_a_conc, 3)) + "\n")
-        self.p3.loadLine(chl_a_comp)
         self.text_results.insert("end", "Chl b [uM]: " + str(round(chl_b_conc, 3)) + "\n\n")
-        self.p3.loadLine(chl_b_comp)
-        
         self.text_results.insert("end", "Chl [uM]: " + str(round(chl_conc, 3)) + "\n")
-        self.p3.loadLine(chl_fit)
         self.text_results.insert("end", "Car [uM]: " + str(round(car_conc, 3)) + "\n\n")
-        self.p2.loadLine(car_fit)
-        
-        for i in range(len(chl_comps)):
-            self.text_results.insert("end", chl_comps[i].label + " [uM]: " + str(round(chl_concents[i], 3)) + "\n")
-            self.p3.loadLine(chl_comps[i])
-        for i in range(len(car_comps)):
-            self.text_results.insert("end", car_comps[i].label + " [uM]: " + str(round(car_concents[i], 3)) + "\n")
-            self.p2.loadLine(car_comps[i])
-        
+        for i in range(len(chl_comps)): self.text_results.insert("end", chl_comps[i].label + " [uM]: " + str(round(chl_concents[i], 3)) + "\n")
+        for i in range(len(car_comps)): self.text_results.insert("end", car_comps[i].label + " [uM]: " + str(round(car_concents[i], 3)) + "\n")
         self.text_results.configure(state= "disabled") # Prevent the user to edit the text.
-        self.p2.updatePlot(); self.p3.updatePlot();
+        
+
         self.string_status.set("Fit finished!")
         
         
