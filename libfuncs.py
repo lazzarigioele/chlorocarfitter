@@ -90,31 +90,36 @@ def loadCSV(file):
         
     vector = []
     
-    # try to understand delimiters:
+
+    # PART 1. Try to understand delimiters:
     csv_file = open(file, "r")
     full_string = csv_file.read()
     csv_file.close()
-    if ";" in full_string:
-        delimiter = ";"
-    elif "\t" in full_string:
-        delimiter = "\t"
-    else:
-        delimiter = ","
+    if ";" in full_string: delimiter = ";"
+    elif "\t" in full_string: delimiter = "\t"
+    else: delimiter = ","
     
-    # metadata processing:
+
+    # PART 2. Header processing:
     csv_file = open(file, "r")
     dictionary = csv.DictReader(csv_file, delimiter = delimiter)
     names = dictionary.fieldnames # gets dataset labels
+    # if the .csv is formatted like "A;B;C;D;E;" instead of "A;B;C;D;E"
+    # the resulting vectors wil be ['A','B','C','D','E',''] 
+    # this will alter also n_sets. Remove here the trailing '' to avoid further controls.
+    if(names[-1] == ''): del names[-1] 
     del names[0] # excludes the x (nm) column
     n_sets = len(names) # counts how many datasets
     
-    # create empty dataset vector with correct names:
+
+    # PART 3: Create empty dataset vector with correct names:
     for i in range(n_sets):
         fc = ObjCoord()
         fc.label = names[i]
         vector.append(copy.deepcopy(fc)) # deepcopy necessary here!
     
-    # fill datasets:
+
+    # PART 4: Fill datasets:
     rows = csv.reader(csv_file, delimiter = delimiter) # first row already read!   
     for row in rows:
         for i in range(n_sets):
@@ -125,11 +130,13 @@ def loadCSV(file):
                 vector[i].x.append(float(row[0])) # convert string to float
                 vector[i].y.append(float(row[i+1])) # +1 excludes the nm column
     
-    # check for inversed datasets (as in Cary spectrophotometers):
+
+    # PART 5: Check for inversed datasets (as in Cary spectrophotometers):
     for i in range(n_sets):
         if vector[i].x[0] > vector[i].x[-1]:
             vector[i].x.reverse()
             vector[i].y.reverse()
+    
     
     csv_file.close()
     return vector
