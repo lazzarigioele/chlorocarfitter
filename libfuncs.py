@@ -162,8 +162,10 @@ def loadXLSX(file):
         vector.append(copy.deepcopy(fc)) # deepcopy necessary here!
     
     # fill datasets:
+    skipped = False
     for row in db.ws(ws=sheetnames[0]).rows:
-        if "nm" in row: # skip header row
+        if skipped == False: # skip header row
+            skipped = True
             continue
         for i in range(n_sets):
             vector[i].x.append(float(row[0])) # convert string to float
