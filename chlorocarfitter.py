@@ -118,13 +118,28 @@ class MainFrame(tkinter.ttk.Frame):
         self.combo_fitter["values"] = [""]
         self.combo_fitter.current(0) # Fills the combobox with nothing. Otherwise default value on creation is "0".
         self.combo_fitter.grid(row=7, column=1, columnspan=2, padx=(10, 10), pady=5, sticky = "WE")
+        
+        self.norm_var = tkinter.StringVar()
+        self.norm_var.set('1')
+        self.norm_label = tkinter.ttk.Label(self.frame_controls, width=5, text="Norm. factor:", anchor="e") # anchor="e" is right-aligned
+        self.norm_label.grid(row=8, column=1, padx=(10, 5), pady=5, sticky="WE")
+        # validatecommand is a function and returns True if the change is accepted
+        # validatecommand is called every time the Entry is modified
+        # '%S' means: inserted or deleted char is passed as argument to only_numbers function
+        def only_numbers(char):
+            return char.isdigit() # Exponents, like ², are also considered to be a digit.
+        validation = self.register(only_numbers)
+        self.norm_entry = tkinter.ttk.Entry(self.frame_controls, width=5, textvariable=self.norm_var,
+                                            validate="key", validatecommand=(validation, '%S'))
+        self.norm_entry.grid(row=8, column=2, padx=(5, 10), pady=5, sticky="WE")
+        
         self.combo_algo = tkinter.ttk.Combobox(self.frame_controls, width=5, state= "readonly")
         self.combo_algo["values"] = ["Caffarri", "Porra"]
         self.combo_algo.current(0) # Fills the combobox with nothing. Otherwise default value on creation is "0".
         self.combo_algo.bind("<<ComboboxSelected>>", self.__onAlgoChange)
-        self.combo_algo.grid(row=8, column=1, padx=(10, 5), pady=5, sticky = "WE")
+        self.combo_algo.grid(row=9, column=1, padx=(10, 5), pady=5, sticky = "WE")
         self.button_fitter = tkinter.ttk.Button(self.frame_controls, text= "Fitting", width= 10, command= self.onFitting)
-        self.button_fitter.grid(row=8, column=2, padx=(5,10), pady=5)
+        self.button_fitter.grid(row=9, column=2, padx=(5,10), pady=5)
         # FITTING RESULTS
         self.frame_results = tkinter.ttk.Frame(self.frame_controls)
         self.scroll_results = tkinter.ttk.Scrollbar(self.frame_results, orient="vertical")
@@ -133,21 +148,21 @@ class MainFrame(tkinter.ttk.Frame):
         self.scroll_results.config(command= self.text_results.yview)
         self.scroll_results.pack(side="right", fill="y")
         self.text_results.pack(side="left", fill="both", expand=1)
-        self.frame_results.grid(row=9, column = 1, columnspan=2, padx=(10, 10), pady=5, sticky = "WE")
+        self.frame_results.grid(row=10, column = 1, columnspan=2, padx=(10, 10), pady=5, sticky = "WE")
         # SAVE
         self.button_save = tkinter.ttk.Button(self.frame_controls, text ="Save...", width = 10, command = self.onSave)
-        self.button_save.grid(row=10, column = 1,  padx=(10,5), pady=(5))
+        self.button_save.grid(row=11, column = 1,  padx=(10,5), pady=(5))
         # HIDE
         self.button_hide = tkinter.ttk.Button(self.frame_controls, text ="Hide", width = 10, command= self.onHide)
-        self.button_hide.grid(row=10, column = 2,  padx=(5,10), pady=(5))
+        self.button_hide.grid(row=11, column = 2,  padx=(5,10), pady=(5))
         self.button_hide["state"] = "disabled"
         # STATUS BAR / PROGRESS BAR
         self.string_status = tkinter.StringVar()
         self.label_status = tkinter.ttk.Label(self.frame_controls,  width=10, textvariable= self.string_status)
-        self.label_status.grid(row=11, column=1, columnspan=2, padx=(10,10), pady=(5, 10), sticky= "WE")
+        self.label_status.grid(row=12, column=1, columnspan=2, padx=(10,10), pady=(5, 10), sticky= "WE")
         self.string_status.set("Starting up... Ready!")
         self.progress = tkinter.ttk.Progressbar(self.frame_controls, orient = "horizontal", mode = 'determinate')
-        self.progress.grid(row=11, column=1, columnspan=2, padx=(10,10), pady=(5, 10), sticky= "WE")
+        self.progress.grid(row=12, column=1, columnspan=2, padx=(10,10), pady=(5, 10), sticky= "WE")
         self.progress["value"] = 70
         self.progress.grid_remove()
              
@@ -350,6 +365,12 @@ class MainFrame(tkinter.ttk.Frame):
         choosen.changeColor("gray60")
         
         
+        # get the normalization factor
+        norm = self.norm_var.get()
+        if norm == '': self.norm_var.set('1')
+        norm = int(self.norm_var.get())
+
+
         # calculate contributions 
         chl_concents, chl_comps = fitterChl(choosen, self.standards, self.combo_algo.get())
         chl_a_conc, chl_a_comp = compsAdder(chl_concents[0:2], chl_comps[0:2], "Chl a fit", color = "SteelBlue4")
@@ -392,12 +413,12 @@ class MainFrame(tkinter.ttk.Frame):
         self.text_results.insert("end", choosen.label + ": \n\n")
         self.text_results.insert("end", "Chl a/b: " + str(round(chl_a_conc/chl_b_conc, 3)) + "\n")
         self.text_results.insert("end", "Chl/Car: " + str(round(chl_conc/car_conc, 3)) + "\n\n")
-        self.text_results.insert("end", "Chl a [uM]: " + str(round(chl_a_conc, 3)) + "\n")
-        self.text_results.insert("end", "Chl b [uM]: " + str(round(chl_b_conc, 3)) + "\n\n")
-        self.text_results.insert("end", "Chl [uM]: " + str(round(chl_conc, 3)) + "\n")
-        self.text_results.insert("end", "Car [uM]: " + str(round(car_conc, 3)) + "\n\n")
-        for i in range(len(chl_comps)): self.text_results.insert("end", chl_comps[i].label + " [uM]: " + str(round(chl_concents[i], 3)) + "\n")
-        for i in range(len(car_comps)): self.text_results.insert("end", car_comps[i].label + " [uM]: " + str(round(car_concents[i], 3)) + "\n")
+        self.text_results.insert("end", "Chl a [uM]: " + str(round(chl_a_conc/norm, 3)) + "\n")
+        self.text_results.insert("end", "Chl b [uM]: " + str(round(chl_b_conc/norm, 3)) + "\n\n")
+        self.text_results.insert("end", "Chl [uM]: " + str(round(chl_conc/norm, 3)) + "\n")
+        self.text_results.insert("end", "Car [uM]: " + str(round(car_conc/norm, 3)) + "\n\n")
+        for i in range(len(chl_comps)): self.text_results.insert("end", chl_comps[i].label + " [uM]: " + str(round(chl_concents[i]/norm, 3)) + "\n")
+        for i in range(len(car_comps)): self.text_results.insert("end", car_comps[i].label + " [uM]: " + str(round(car_concents[i]/norm, 3)) + "\n")
         self.text_results.configure(state= "disabled") # Prevent the user to edit the text.
         
 
@@ -490,7 +511,7 @@ def resize_handler():
 
 #if __name__ == "__main__":
 root = tkinter.Tk()
-root.title("chlorocarfitter v1.0")
+root.title("chlorocarfitter v1.1")
 icon = tkinter.Image(imgtype = "photo", file= resourcePath("icons/icon_chlorocarfitter.gif"))
 root.iconphoto(True, icon) # default = True
 main = MainFrame(root)

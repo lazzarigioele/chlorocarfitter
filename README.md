@@ -46,13 +46,13 @@ If selected, option "720z.+ red" will zero all the samples at 720nm, and then no
 
 ### Executing the fit
 
-If selected, option "Porra" enable the classic Porra equations. Clicking on "Calculate" will show up Chl a and Chl b concentrations both in ug/uL and in nmol/uL. A Chl a/b ratio is also displayed. 
+If selected, option "Porra" enable the classic Porra equations. Clicking on "Calculate" will show up Chl a and Chl b concentrations both in ug/uL and in nmol/uL. A Chl a/b ratio is also displayed. With "Porra" the normalization factor is ignored.
 
-If selected, option "Caffarri" enable a fitting using the Non-Negative Least Squares algorithm, in the classic version of Lawson-Hanson. Clicking on "Fitting" will show up the pigments' concentrations in uM. Pigments considered are: Chl a, Chl b,  Chl (total cholorophyll), Beta80 (beta-carotene), Lute80 (lutein), Neo80 (neoxanthin), Viola80 (violaxanthin), Zea80 (zeaxanthin). Chl a/b and Chl/Car ratios are also provided. Clicking on "Fitting" will also show up the graphical spectrum decomposition.
+If selected, option "Caffarri" enable a fitting using the Non-Negative Least Squares algorithm, in the classic version of Lawson-Hanson. Clicking on "Fitting" will show up the pigments' concentrations in uM. Pigments considered are: Chl a, Chl b,  Chl (total cholorophyll), Beta80 (beta-carotene), Lute80 (lutein), Neo80 (neoxanthin), Viola80 (violaxanthin), Zea80 (zeaxanthin). Chl a/b and Chl/Car ratios are also provided. Clicking on "Fitting" will also show up the graphical spectrum decomposition. Concentrations in uM are divided by the normalization factor specified by the user (default: 1).
 
 ### Saving the results
 
-The button 'Save...' automatically fits all the different samples using the algorithm specified, and saves the results in an Excel file. 
+The button 'Save...' automatically fits all the different samples using the algorithm specified, and saves the results in an Excel file. Here, the normalization factor is ignored.
 
 ### Bugs and future versions
 
