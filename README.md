@@ -73,26 +73,23 @@ Older versions of this software used `numpy` to handle the matrix algebra underl
 
 The minimal development environment is given by:
 
-```bash
-conda create --name chlorocarfitter -y
-conda activate chlorocarfitter
-conda install python==3.7.10 pyinstaller==4.5.1 -c conda-forge
-```
+    conda create --name chlorocarfitter -y
+    conda activate chlorocarfitter
+    conda install python==3.7.10 pyinstaller==4.5.1 -c conda-forge
 
 To build the executable for MacOS 11+:
-```
-pyinstaller -y -F -w -i "icons/icon_macos_chlorocarfitter.icns" --add-data "README.md:." --add-data "standards/*:./standards" --add-data "icons/icon_chlorocarfitter.gif:./icons" --name "chlorocarfitter_MacOS11" "chlorocarfitter.py"
-```
+
+    pyinstaller -y -F -w -i "icons/icon_macos_chlorocarfitter.icns" --add-data "README.md:." --add-data "standards/*:./standards" --add-data "icons/icon_chlorocarfitter.gif:./icons" --name "chlorocarfitter_MacOS11" "chlorocarfitter.py"
+
 
 To build the executable for Windows 10+:
-```
-pyinstaller -y -F -w -i "icons/icon_windows_chlorocarfitter.ico" --add-data "README.md;." --add-data "standards/*;./standards" --add-data "icons/icon_chlorocarfitter.gif;./icons" --name "chlorocarfitter_Windows10" "chlorocarfitter.py"
-```
+
+    pyinstaller -y -F -w -i "icons/icon_windows_chlorocarfitter.ico" --add-data "README.md;." --add-data "standards/*;./standards" --add-data "icons/icon_chlorocarfitter.gif;./icons" --name "chlorocarfitter_Windows10" "chlorocarfitter.py"
+
 
 To build the executable for Ubuntu 18+:
-```
-pyinstaller -y -F -w --add-data "README.md:." --add-data "standards/*:./standards" --add-data "icons/icon_chlorocarfitter.gif:./icons" --name "chlorocarfitter_Ubuntu18.bin" "chlorocarfitter.py"
-```
+
+    pyinstaller -y -F -w --add-data "README.md:." --add-data "standards/*:./standards" --add-data "icons/icon_chlorocarfitter.gif:./icons" --name "chlorocarfitter_Ubuntu18.bin" "chlorocarfitter.py"
 
 `-F` / `-D`: one file / one directory.
 `-w`: Windows and MacOS: do not provide a console window for standard i/o.

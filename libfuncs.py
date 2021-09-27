@@ -24,6 +24,9 @@ def parseMD(widget, file, top):
             line = line.replace("    ", "")
             widget.insert("end", line)
             widget.tag_add('code', str(line_counter)+'.0', str(line_counter)+'.end')
+        # image
+        elif line.startswith("!["):
+            continue
         # body
         else:
             widget.insert("end", line)
@@ -44,6 +47,20 @@ def parseMD(widget, file, top):
                     "line": line_counter,
                     "begin": begin,
                     "end": end-1})
+        # inline code
+        if line.find("`") != -1:
+            while line.find("`") != -1:
+
+                begin = line.find("`"); line = line.replace("`", "", 1) # first occurence
+                end = line.find("`"); line = line.replace("`", "", 1) # second occurence
+
+                begin_coord = str(line_counter)+'.'+str(begin)
+                end_coord = str(line_counter)+'.'+str(end)
+
+                widget.delete(begin_coord)
+                widget.delete(end_coord)                
+
+                widget.tag_add("code", begin_coord, end_coord)
                 
         line_counter += 1
     
@@ -74,15 +91,15 @@ def parseMD(widget, file, top):
     if platform.system() == "Windows": 
         widget.tag_config('title', font='Verdana 15 bold')
         widget.tag_config('body', font='Verdana 10')
-        widget.tag_config('code', font='Courier 10')
+        widget.tag_config('code', font='Courier 10', foreground='green', background='lightgrey')
     if platform.system() == "Linux":
         widget.tag_config('title', font='Helvetica 15 bold')
         widget.tag_config('body', font='Helvetica 10')
-        widget.tag_config('code', font='Courier 10')
+        widget.tag_config('code', font='Courier 10', foreground='green', background='lightgrey')
     if platform.system() == "Darwin": # "Darwin" for MacOS
         widget.tag_config('title', font='Verdana 17 bold')
         widget.tag_config('body', font='Verdana 12')
-        widget.tag_config('code', font='Courier 12')
+        widget.tag_config('code', font='Courier 12', foreground='green', background='lightgrey')
         
         
 
