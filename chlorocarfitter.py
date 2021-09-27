@@ -343,7 +343,7 @@ class MainFrame(tkinter.ttk.Frame):
         if self.combo_algo.get() == "Porra":
             self.button_fitter["text"] = "Calculate"
         else:
-            self.button_fitter["text"] = "Fitting"
+            self.button_fitter["text"] = "Fit selected"
             
             
        
@@ -430,17 +430,27 @@ class MainFrame(tkinter.ttk.Frame):
         # clean and fill text_results
         self.text_results.configure(state="normal") # Enables the Text widget to be programmatically filled.
         self.text_results.delete("1.0", "end")
-        self.text_results.insert("end", choosen.label + ": \n\n")
+        self.text_results.insert("end", choosen.label + " report: \n\n", "title")
         self.text_results.insert("end", "Chl a/b: " + str(round(chl_a_conc/chl_b_conc, 3)) + "\n")
         self.text_results.insert("end", "Chl/Car: " + str(round(chl_conc/car_conc, 3)) + "\n\n")
-        self.text_results.insert("end", "Chl a [uM]: " + str(round(chl_a_conc/norm, 3)) + "\n")
-        self.text_results.insert("end", "Chl b [uM]: " + str(round(chl_b_conc/norm, 3)) + "\n\n")
-        self.text_results.insert("end", "Chl [uM]: " + str(round(chl_conc/norm, 3)) + "\n")
-        self.text_results.insert("end", "Car [uM]: " + str(round(car_conc/norm, 3)) + "\n\n")
-        for i in range(len(chl_comps)): self.text_results.insert("end", chl_comps[i].label + " [uM]: " + str(round(chl_concents[i]/norm, 3)) + "\n")
-        for i in range(len(car_comps)): self.text_results.insert("end", car_comps[i].label + " [uM]: " + str(round(car_concents[i]/norm, 3)) + "\n")
-        self.text_results.configure(state= "disabled") # Prevent the user to edit the text.
+        # Raw concentrations
+        self.text_results.insert("end", "Raw concentrations: \n\n", "raw")
+        self.text_results.insert("end", "Chl a [uM]: ", "raw", str(round(chl_a_conc, 3)) + "\n")
+        self.text_results.insert("end", "Chl b [uM]: ", "raw", str(round(chl_b_conc, 3)) + "\n\n")
+        self.text_results.insert("end", "Chl [uM]: ", "raw", str(round(chl_conc, 3)) + "\n")
+        self.text_results.insert("end", "Car [uM]: ", "raw", str(round(car_conc, 3)) + "\n\n")
+        for i in range(len(chl_comps)): self.text_results.insert("end", chl_comps[i].label + " [uM]: ", "raw", str(round(chl_concents[i], 3)) + "\n")
+        for i in range(len(car_comps)): self.text_results.insert("end", car_comps[i].label + " [uM]: ", "raw", str(round(car_concents[i], 3)) + "\n")
+        # Normalized values
+        self.text_results.insert("end", "\nNormalized values: \n\n", "norm")
+        self.text_results.insert("end", "Chl a: ", "norm", str(round(norm * chl_a_conc /(chl_a_conc + chl_b_conc), 3)) + "\n")
+        self.text_results.insert("end", "Chl b: ", "norm", str(round(norm * chl_b_conc /(chl_a_conc + chl_b_conc), 3)) + "\n")
+        self.text_results.insert("end", "Car: ", "norm", str(round(norm * car_conc /(chl_a_conc + chl_b_conc), 3)) + "\n\n")
+        for i in range(len(car_comps)): self.text_results.insert("end", car_comps[i].label + ": ", "norm", str(round(norm * car_concents[i] /(chl_a_conc + chl_b_conc), 3)) + "\n")
         
+        self.text_results.configure(state= "disabled") # Prevent the user to edit the text.
+        self.text_results.tag_config('raw', foreground='dark violet')
+        self.text_results.tag_config('norm', foreground='deep pink')
 
         self.string_status.set("Fit finished!")
         

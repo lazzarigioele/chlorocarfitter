@@ -14,7 +14,7 @@ Note 2: on Ubuntu the bin file should start with a double-click. Anyway, you cou
 
 First, click on "Load dataset" to load an Excel file or a `.csv` file containing all your samples. Excel files must have the `.xlsx` extension (Excel 2007 and newer). The file to load must contain the wavelengths in the first column, followed by all the individual samples. The first row must contain the labels. Do not include spectroscopy blanks into this file. The `testfiles` folder in GitHub contains several `.csv` and `.xlsx` example files to test Chlorocarfitter. 
 
-What follow is an extract of an example .CSV file:
+What follow is an extract of an example `.csv` file:
 
     nm,control,treated A,treated B
     350,0.213394,0.20994,0.251385
