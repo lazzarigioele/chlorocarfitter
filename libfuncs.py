@@ -443,7 +443,7 @@ def compsAdder(concents, comps, label, color = "gainsboro"):
 
 
 
-def calculatePorra(sample):
+def calculatePorraEq(sample):
     
     A6636 = sample.y[sample.x.index(663.6)]
     A6466 = sample.y[sample.x.index(646.6)]
@@ -454,6 +454,22 @@ def calculatePorra(sample):
     # results for nmol/mL
     Cchla_nmol = 13.713 * A6636 - 2.854 * A6466
     Cchlb_nmol = 22.386 * A6466 - 5.416 * A6636
+    
+    
+    return round(Cchla_ug, 3), round(Cchlb_ug,3), round(Cchla_nmol, 3), round(Cchlb_nmol,3)
+
+
+def calculateCaffarriEq(sample):
+    
+    A6636 = sample.y[sample.x.index(663.6)]
+    A6466 = sample.y[sample.x.index(646.6)]
+    
+    # results for ug/mL
+    Cchla_ug = 12.18 * A6636 - 2.36 * A6466
+    Cchlb_ug = 20.19 * A6466 - 4.59 * A6636
+    # results for nmol/mL
+    Cchla_nmol = 13.63 * A6636 - 2.64 * A6466
+    Cchlb_nmol = 22.25 * A6466 - 5.06 * A6636
     
     
     return round(Cchla_ug, 3), round(Cchlb_ug,3), round(Cchla_nmol, 3), round(Cchlb_nmol,3)

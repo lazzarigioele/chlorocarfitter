@@ -6,7 +6,7 @@ def resourcePath(relative_path):
 
 from libplot import ObjPlot
 from libcoord import ObjCoord
-from libfuncs import parseMD, loadCSV, loadXLSX, saveCSV, saveXLSX, fitterChl, fitterCar, compsAdder, calculatePorra
+from libfuncs import parseMD, loadCSV, loadXLSX, saveCSV, saveXLSX, fitterChl, fitterCar, compsAdder, calculatePorraEq, calculateCaffarriEq
 import tkinter, tkinter.font, tkinter.ttk, tkinter.filedialog
 import platform, copy, sys, os, datetime
 
@@ -146,7 +146,7 @@ class MainFrame(tkinter.ttk.Frame):
         
         # Algorithm Combobox
         self.combo_algo = tkinter.ttk.Combobox(self.frame_controls, width=5, state= "readonly")
-        self.combo_algo["values"] = ["Caffarri", "Porra"]
+        self.combo_algo["values"] = ["Caffarri fit", "Porra eq", "Caffarri eq"]
         self.combo_algo.current(0) # Fills the combobox with nothing. Otherwise default value on creation is "0".
         self.combo_algo.bind("<<ComboboxSelected>>", self.__onAlgoChange)
         self.combo_algo.grid(row=9, column=1, padx=(10, 5), pady=5, sticky = "WE")
@@ -340,7 +340,7 @@ class MainFrame(tkinter.ttk.Frame):
         
     def __onAlgoChange(self, event):
         
-        if self.combo_algo.get() == "Porra":
+        if self.combo_algo.get() == "Porra eq" or self.combo_algo.get() == "Caffarri eq":
             self.button_fitter["text"] = "Calculate"
         else:
             self.button_fitter["text"] = "Fit selected"
@@ -354,9 +354,14 @@ class MainFrame(tkinter.ttk.Frame):
             self.string_status.set("First load samples!")
             return
         
-        # if Porra is selected, exit from onFitting()
-        if self.combo_algo.get() == "Porra":
-            self.onPorra()
+        # if Porra eq is selected, exit from onFitting()
+        if self.combo_algo.get() == "Porra eq":
+            self.onPorraEq()
+            return
+
+        # if Caffarri eq is selected, exit from onFitting()
+        if self.combo_algo.get() == "Caffarri eq":
+            self.onCaffarriEq()
             return
         
         # create p2 and p3 if needed, and activate button_hide
@@ -456,9 +461,9 @@ class MainFrame(tkinter.ttk.Frame):
         
         
         
-    def onPorra(self):
+    def onPorraEq(self):
         
-        self.onHide()
+        self.onPlot()
         
         self.datasets = copy.deepcopy(self.datasets_backup)
         self.doComboManipulations(isFitting= True) # isFitting=False only when plotting
@@ -469,7 +474,7 @@ class MainFrame(tkinter.ttk.Frame):
         choosen = self.datasets[self.combo_fitter.current()]
         self.text_results.insert("end", choosen.label + ": \n")
         
-        Cchla_ug, Cchlb_ug, Cchla_nmol, Cchlb_nmol = calculatePorra(choosen)
+        Cchla_ug, Cchlb_ug, Cchla_nmol, Cchlb_nmol = calculatePorraEq(choosen)
         self.text_results.insert("end", "\nWith ug/uL concents:\n\n")
         self.text_results.insert("end", "Chl a/b: " + str(round(Cchla_ug/Cchlb_ug, 3)) + "\n")
         self.text_results.insert("end", "Chl a: " + str(Cchla_ug) + "\n")
@@ -482,8 +487,36 @@ class MainFrame(tkinter.ttk.Frame):
         self.text_results.configure(state= "disabled") # Prevent the user to edit the text.
         self.string_status.set("Calcs finished!")
         
+
+
+    def onCaffarriEq(self):
+        
+        self.onPlot()
+        
+        self.datasets = copy.deepcopy(self.datasets_backup)
+        self.doComboManipulations(isFitting= True) # isFitting=False only when plotting
+        
+        self.text_results.configure(state="normal") # Enables the Text widget to be programmatically filled.
+        self.text_results.delete("1.0", "end")
+        
+        choosen = self.datasets[self.combo_fitter.current()]
+        self.text_results.insert("end", choosen.label + ": \n")
+        
+        Cchla_ug, Cchlb_ug, Cchla_nmol, Cchlb_nmol = calculateCaffarriEq(choosen)
+        self.text_results.insert("end", "\nWith ug/uL concents:\n\n")
+        self.text_results.insert("end", "Chl a/b: " + str(round(Cchla_ug/Cchlb_ug, 3)) + "\n")
+        self.text_results.insert("end", "Chl a: " + str(Cchla_ug) + "\n")
+        self.text_results.insert("end", "Chl b: " + str(Cchlb_ug) + "\n")
+        self.text_results.insert("end", "\nWith nmol/uL concents:\n\n")
+        self.text_results.insert("end", "Chl a/b: " + str(round(Cchla_nmol/Cchlb_nmol, 3)) + "\n")
+        self.text_results.insert("end", "Chl a: " + str(Cchla_nmol) + "\n")
+        self.text_results.insert("end", "Chl b: " + str(Cchlb_nmol) + "\n")
+                
+        self.text_results.configure(state= "disabled") # Prevent the user to edit the text.
+        self.string_status.set("Calcs finished!")
     
     
+
     def onSave(self):
         
         if self.datasets_backup == []:
@@ -502,9 +535,9 @@ class MainFrame(tkinter.ttk.Frame):
         
         # get current date and time -> to avoid filename conflicts
         now = datetime.datetime.now() # get system's date and time
-        nowString = "_" + now.strftime("%Y%m%d%H%M%S")
+        nowString = now.strftime("%Y%m%d%H%M%S")
             
-        file_path = tkinter.filedialog.asksaveasfilename(title = "Save results...", initialfile = self.datasets_filename + "_results_with_" + self.combo_algo.get() + nowString, defaultextension = ".xlsx")
+        file_path = tkinter.filedialog.asksaveasfilename(title = "Save results...", initialfile = self.datasets_filename + "_" + nowString, defaultextension = ".xlsx")
         if file_path == "":  # If dialog closed with "cancel"
             self.string_status.set("Operation canceled!")
             return
@@ -512,9 +545,12 @@ class MainFrame(tkinter.ttk.Frame):
         if os.path.isfile(file_path): # for file replacement
             os.remove(file_path)
         
-        if(self.combo_algo.get() == "Porra"):
-            tkinter.messagebox.showwarning(title="Warning", message="Save with Porra is not implemented. Caffarri will be used instead.")
+        if(self.combo_algo.get() == "Porra eq"):
+            tkinter.messagebox.showwarning(title="Warning", message="Save with Porra eq is not implemented. Caffarri fit will be used instead.")
         
+        if(self.combo_algo.get() == "Caffarri eq"):
+            tkinter.messagebox.showwarning(title="Warning", message="Save with Caffarri eq is not implemented. Caffarri fit will be used instead.")
+
         self.progress.grid() # show progress bar
         # saveCSV(self.datasets, self.standards, self.combo_algo.get(), file_path, self.progress)
         saveXLSX(self.datasets, self.standards, self.combo_algo.get(), file_path, self.progress, norm)
@@ -546,7 +582,7 @@ def resize_handler():
 
 #if __name__ == "__main__":
 root = tkinter.Tk()
-root.title("chlorocarfitter v1.1")
+root.title("chlorocarfitter v1.2")
 icon = tkinter.Image(imgtype = "photo", file= resourcePath("icons/icon_chlorocarfitter.gif"))
 root.iconphoto(True, icon) # default = True
 main = MainFrame(root)
