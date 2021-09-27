@@ -415,8 +415,8 @@ class MainFrame(tkinter.ttk.Frame):
         self.p3.loadLine(chl_a_comp)
         self.p3.loadLine(chl_b_comp)
         self.p3.loadLine(chl_fit)
-        self.p3.updatePlot()
         for i in range(len(chl_comps)): self.p3.loadLine(chl_comps[i])
+        self.p3.updatePlot()
         # clean and fill p2
         self.p2.cleanPlot()
         self.p2.loadLine(choosen_subtracted)
