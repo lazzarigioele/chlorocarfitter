@@ -167,11 +167,11 @@ class MainFrame(tkinter.ttk.Frame):
         
         # "Fit all & Save" button
         self.button_save = tkinter.ttk.Button(self.frame_controls, text ="Fit all & Save", width = 10, command = self.onSave)
-        self.button_save.grid(row=11, column = 1,  padx=(10,5), pady=(5))
+        self.button_save.grid(row=11, column = 2,  padx=(5,10), pady=(5))
         
-        # "Hide" button
-        self.button_hide = tkinter.ttk.Button(self.frame_controls, text ="Hide", width = 10, command= self.onHide)
-        self.button_hide.grid(row=11, column = 2,  padx=(5,10), pady=(5))
+        # "Hide details" button
+        self.button_hide = tkinter.ttk.Button(self.frame_controls, text ="Hide details", width = 10, command= self.onHide)
+        self.button_hide.grid(row=11, column = 1,  padx=(10,5), pady=(5))
         self.button_hide["state"] = "disabled"
         
         # STATUS BAR / PROGRESS BAR
@@ -320,6 +320,8 @@ class MainFrame(tkinter.ttk.Frame):
 
 
     def onPlot(self):
+
+        self.onHide()
         
         self.string_status.set("Plotting..."); self.label_status.update_idletasks()
         
