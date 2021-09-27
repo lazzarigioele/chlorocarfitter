@@ -232,15 +232,21 @@ def saveCSV(datasets, standards, algo, file_path, progress):
         
 
 
-def saveXLSX(datasets, standards, algo, file_path, progress):
+def saveXLSX(datasets, standards, algo, file_path, progress, norm):
     
     db = xl.Database() # create a black pylightxl-db
     db.add_ws(ws="chlorocarfitter") # add a blank worksheet to the pylightxl-db
     
     # write the header:
-    header = ["Sample", "Chl/Car", "Chl a/b", "Chl [uM]", "Car [uM]", "Chl a [uM]", "Chl b [uM]", 
+    header = ["Sample", "Chl/Car", "Chl a/b", 
+              # raw concetrations:
+              "Chl [uM]", "Car [uM]", "Chl a [uM]", "Chl b [uM]", 
               "Beta 80 [uM]", "Lute 80 [uM]", "Neo 80 [uM]", "Viola 80 [uM]", "Zea 80 [uM]",
-              "Chl a 70 [uM]", "Chl a 90 [uM]", "Chl b 70 [uM]", "Chl b 90 [uM]"]
+              "Chl a 70 [uM]", "Chl a 90 [uM]", "Chl b 70 [uM]", "Chl b 90 [uM]",
+              # normalized values:
+              "", # skip one column
+              "Norm Chl a [uM]", "Norm Chl b [uM]", "Norm Car [uM]",
+              "Norm Beta 80 [uM]", "Norm Lute 80 [uM]", "Norm Neo 80 [uM]", "Norm Viola 80 [uM]", "Norm Zea 80 [uM]"]
     for col_id, data in enumerate(header, start=1):
         db.ws(ws="chlorocarfitter").update_index(row=1, col=col_id, val=data)
     
@@ -256,10 +262,22 @@ def saveXLSX(datasets, standards, algo, file_path, progress):
         car_conc, car_fit = compsAdder(car_concents[0:5], car_comps[0:5], "Car fit")
                                                  
         samplerow = [dataset.label, round(chl_conc/car_conc, 3), round(chl_a_conc/chl_b_conc, 3),
+               # raw concetrations:
                round(chl_conc, 3), round(car_conc, 3), round(chl_a_conc, 3), round(chl_b_conc, 3),
                round(car_concents[0], 3), round(car_concents[1], 3), round(car_concents[2], 3),
                round(car_concents[3], 3), round(car_concents[4], 3), round(chl_concents[0], 3),
-               round(chl_concents[1], 3), round(chl_concents[2], 3), round(chl_concents[3], 3)]
+               round(chl_concents[1], 3), round(chl_concents[2], 3), round(chl_concents[3], 3),
+               # normalized values:
+               "", # skip one column
+               round(norm * chl_a_conc /(chl_a_conc + chl_b_conc), 3), 
+               round(norm * chl_b_conc /(chl_a_conc + chl_b_conc), 3), 
+               round(norm * car_conc /(chl_a_conc + chl_b_conc), 3), 
+               round(norm * car_concents[0] /(chl_a_conc + chl_b_conc), 3), 
+               round(norm * car_concents[1] /(chl_a_conc + chl_b_conc), 3), 
+               round(norm * car_concents[2] /(chl_a_conc + chl_b_conc), 3), 
+               round(norm * car_concents[3] /(chl_a_conc + chl_b_conc), 3), 
+               round(norm * car_concents[4] /(chl_a_conc + chl_b_conc), 3)]
+
         
         for col_id, data in enumerate(samplerow, start=1):
             db.ws(ws="chlorocarfitter").update_index(row=1+i, col=col_id, val=data)

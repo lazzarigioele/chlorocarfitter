@@ -50,11 +50,11 @@ If selected, option "720z.+ red" will zero all the samples at 720nm, and then no
 
 If selected, option "Porra" enable the classic Porra equations. Clicking on "Calculate" will show up Chl a and Chl b concentrations both in ug/uL and in nmol/uL. A Chl a/b ratio is also displayed. With "Porra" the normalization factor is ignored.
 
-If selected, option "Caffarri" enable a fitting using the Non-Negative Least Squares algorithm, in the classic version of Lawson-Hanson. Clicking on "Fit selected" will show up the pigments' concentrations in uM. Pigments considered are: Chl a, Chl b,  Chl (total cholorophyll), Beta80 (beta-carotene), Lute80 (lutein), Neo80 (neoxanthin), Viola80 (violaxanthin), Zea80 (zeaxanthin). Chl a/b and Chl/Car ratios are also provided. Clicking on "Fit selected" will also show up the graphical spectrum decomposition. Concentrations in uM are divided by the normalization factor specified by the user (default: 1).
+If selected, option "Caffarri" enable a fitting using the Non-Negative Least Squares algorithm, in the classic version of Lawson-Hanson. Clicking on "Fit selected" will show up the pigments' concentrations in uM. Pigments considered are: Chl a, Chl b,  Chl (total cholorophyll), Beta80 (beta-carotene), Lute80 (lutein), Neo80 (neoxanthin), Viola80 (violaxanthin), Zea80 (zeaxanthin). Chl a/b and Chl/Car ratios are also provided. Clicking on "Fit selected" will also show up the graphical spectrum decomposition. Normalized values are displayed in the lower part of the report. Normalization factor `norm` is specified by the user (default: 1). Normalized values (nPigm) are calculated as follows: `nPigm` = `norm` * `Pigm [uM]` / (`Chl a [uM]` + `Chl b [uM]`).
 
 ### Saving the results
 
-The button 'Fit all & Save' automatically fits all the different samples using the algorithm specified, and saves the results in an Excel file. Here, the normalization factor is ignored.
+The button 'Fit all & Save' automatically fits all the different samples using the algorithm specified, and saves the results in an Excel file. Here, the normalized values are shown in the rightmost part of the table. 
 
 ### Bugs and future versions
 

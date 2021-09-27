@@ -489,6 +489,11 @@ class MainFrame(tkinter.ttk.Frame):
         if self.datasets_backup == []:
             self.string_status.set("First load samples!")
             return
+
+        # get the normalization factor
+        norm = self.norm_var.get()
+        if norm == '': self.norm_var.set('1')
+        norm = int(self.norm_var.get())
         
         self.string_status.set("Fitting and saving all..."); self.label_status.update_idletasks()
         
@@ -512,7 +517,7 @@ class MainFrame(tkinter.ttk.Frame):
         
         self.progress.grid() # show progress bar
         # saveCSV(self.datasets, self.standards, self.combo_algo.get(), file_path, self.progress)
-        saveXLSX(self.datasets, self.standards, self.combo_algo.get(), file_path, self.progress)
+        saveXLSX(self.datasets, self.standards, self.combo_algo.get(), file_path, self.progress, norm)
         self.progress.grid_remove() # hide progress bar
     
         self.string_status.set("All saved!")
