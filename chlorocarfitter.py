@@ -213,7 +213,7 @@ class MainFrame(tkinter.ttk.Frame):
         
         # lock window dimensions:
         top.update()
-        top.maxsize(top.winfo_width(), top.winfo_height())
+        #top.maxsize(top.winfo_width(), top.winfo_height())
         top.minsize(top.winfo_width(), top.winfo_height())
     
     

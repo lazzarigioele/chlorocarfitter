@@ -91,15 +91,15 @@ def parseMD(widget, file, top):
     if platform.system() == "Windows": 
         widget.tag_config('title', font='Verdana 15 bold')
         widget.tag_config('body', font='Verdana 10')
-        widget.tag_config('code', font='Courier 10', foreground='green', background='lightgrey')
+        widget.tag_config('code', font='Courier 10', foreground='green')
     if platform.system() == "Linux":
         widget.tag_config('title', font='Helvetica 15 bold')
         widget.tag_config('body', font='Helvetica 10')
-        widget.tag_config('code', font='Courier 10', foreground='green', background='lightgrey')
+        widget.tag_config('code', font='Courier 10', foreground='green')
     if platform.system() == "Darwin": # "Darwin" for MacOS
         widget.tag_config('title', font='Verdana 17 bold')
         widget.tag_config('body', font='Verdana 12')
-        widget.tag_config('code', font='Courier 12', foreground='green', background='lightgrey')
+        widget.tag_config('code', font='Courier 12', foreground='green')
         
         
 

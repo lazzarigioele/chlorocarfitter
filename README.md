@@ -12,7 +12,7 @@ Note 2: on Ubuntu the bin file should start with a double-click. Anyway, you cou
 
 ### Loading of samples
 
-First, click on "Load dataset" to load an Excel file or a .CSV file containing all your samples. Excel files must have the `.xlsx` extension (Excel 2007 and newer). The file to load must contain the wavelengths in the first column, followed by all the individual samples. The first row must contain the labels. Do not include spectroscopy blanks into this file. The `testfiles` folder in GitHub contains several .CSV and .xlsx example files to test Chlorocarfitter. 
+First, click on "Load dataset" to load an Excel file or a `.csv` file containing all your samples. Excel files must have the `.xlsx` extension (Excel 2007 and newer). The file to load must contain the wavelengths in the first column, followed by all the individual samples. The first row must contain the labels. Do not include spectroscopy blanks into this file. The `testfiles` folder in GitHub contains several `.csv` and `.xlsx` example files to test Chlorocarfitter. 
 
 What follow is an extract of an example .CSV file:
 
@@ -24,13 +24,11 @@ What follow is an extract of an example .CSV file:
     350.8,0.214231,0.2108,0.252692
     351,0.214519,0.210976,0.25285
 
-As you can see, the .CSV file should use a "," delimiter. Anyway, also ";" and "\t" delimiters are supported. More specifically, these combinations are valid:
-- delimiter "," decimal separator "." 
-- delimiter ";" decimal separator "."
-- delimiter ";" decimal separator ","
-- delimiter "\t" decimal separator "."
-
-
+As you can see, the `.csv` file should use a `,` delimiter. Anyway, also `;` and `\t` delimiters are supported. More specifically, these combinations are valid:
+- delimiter `,` decimal separator `.` 
+- delimiter `;` decimal separator `.`
+- delimiter `;` decimal separator `,`
+- delimiter `\t` decimal separator `.`
 
 Spectra can be zeroed, but this is not necessary due to the automatic zeroing at 720nm feature. Spectra should be recorded in ascending order, but this in not necessary due to the automatic inversion feature. 
 
@@ -81,11 +79,9 @@ To build the executable for MacOS 11+:
 
     pyinstaller -y -F -w -i "icons/icon_macos_chlorocarfitter.icns" --add-data "README.md:." --add-data "standards/*:./standards" --add-data "icons/icon_chlorocarfitter.gif:./icons" --name "chlorocarfitter_MacOS11" "chlorocarfitter.py"
 
-
 To build the executable for Windows 10+:
 
     pyinstaller -y -F -w -i "icons/icon_windows_chlorocarfitter.ico" --add-data "README.md;." --add-data "standards/*;./standards" --add-data "icons/icon_chlorocarfitter.gif;./icons" --name "chlorocarfitter_Windows10" "chlorocarfitter.py"
-
 
 To build the executable for Ubuntu 18+:
 
