@@ -59,6 +59,7 @@ class MainFrame(tkinter.ttk.Frame):
         # STYLE (same on all platforms!)
         self.ttk_style = tkinter.ttk.Style()
         self.ttk_style.theme_use("clam")
+
         # FONT
         if platform.system() == "Windows": 
             tkinter.font.nametofont("TkDefaultFont").config(family= "Verdana", size = 10)
@@ -69,24 +70,30 @@ class MainFrame(tkinter.ttk.Frame):
         elif platform.system() == "Darwin": # "Darwin" for MacOS
             tkinter.font.nametofont("TkDefaultFont").config(family= "Verdana", size = 12)
             tkinter.font.nametofont("TkTextFont").config(family= "Verdana", size = 12)
+
         # MAIN DIVISION
         self.frame_controls = tkinter.ttk.Frame(self)
         self.frame_canvas = tkinter.ttk.Frame(self)
         self.frame_controls.pack(side = "left")
         self.frame_canvas.pack(fill = "both", expand = True)
-        # INFO
-        self.button_info = tkinter.ttk.Button(self.frame_controls, text ="Info...",  width = 10, command= self.onInfo)
+
+        # "Show manual" button
+        self.button_info = tkinter.ttk.Button(self.frame_controls, text ="Show manual",  width = 10, command= self.onInfo)
         self.button_info.grid(row=1, column = 1, columnspan=2, pady=(10,5))
-        # LOAD
-        self.button_load = tkinter.ttk.Button(self.frame_controls, text ="Load...", width = 10, command= self.onLoad)
-        self.button_load.grid(row=2, column = 2, padx=(5,10), pady=5)
-        # CLEAR
-        self.button_clear = tkinter.ttk.Button(self.frame_controls, text ="Clear", width = 10, command = self.onClear)
-        self.button_clear.grid(row=2, column = 1, padx=(10,5), pady=5)
-        # separator2
+
+        # "Clear all" button
+        self.button_clear = tkinter.ttk.Button(self.frame_controls, text ="Clear all", width = 10, command = self.onClear)
+        self.button_clear.grid(row=2, column = 2, padx=(5,10), pady=5)
+
+        # "Load dataset" button
+        self.button_load = tkinter.ttk.Button(self.frame_controls, text ="Load dataset", width = 10, command= self.onLoad)
+        self.button_load.grid(row=2, column = 1, padx=(10,5), pady=5)
+
+        # First separator 
         self.sep1 = tkinter.ttk.Separator(self.frame_controls, orient="horizontal")
         self.sep1.grid(row=3, column = 1,  columnspan=2, padx=(50,50), pady=10, sticky= "WE")
-        # LISTBOX
+
+        # Listbox
         self.frame_file = tkinter.ttk.Frame(self.frame_controls)
         self.scroll_file = tkinter.ttk.Scrollbar(self.frame_file, orient="vertical")
         self.list_file = tkinter.Listbox(self.frame_file, height = 7, selectmode = "multiple", exportselection=False, yscrollcommand= self.scroll_file.set, borderwidth=0)
@@ -94,7 +101,8 @@ class MainFrame(tkinter.ttk.Frame):
         self.scroll_file.pack(side="right", fill="y")
         self.list_file.pack(side="left", fill="both", expand=1)
         self.frame_file.grid(row=4, column=1, columnspan=2, padx=(10, 10), pady=5, sticky = "WE") 
-        # RADIOS
+
+        # Radios
         self.frame_radio = tkinter.ttk.Frame(self.frame_controls)
         self.manipulation_var = tkinter.StringVar()
         self.manipulation_var.set("nothing")
@@ -106,19 +114,23 @@ class MainFrame(tkinter.ttk.Frame):
         self.radio_720_red.grid(sticky = "W")
         self.radio_720.invoke()
         self.frame_radio.grid(row=5, column =1, pady =5, padx=(10,5))
-        # PLOT
-        self.button_plot = tkinter.ttk.Button(self.frame_controls, text ="Plot", width = 10, command= self.onPlot)
+        
+        # "Plot selected" button
+        self.button_plot = tkinter.ttk.Button(self.frame_controls, text ="Plot selected", width = 10, command= self.onPlot)
         self.button_plot.grid(row=5, column = 2,  padx=(5,10), pady=5)
-        # separator2
+
+        # Second separator 
         self.sep2 = tkinter.ttk.Separator(self.frame_controls, orient="horizontal")
         self.sep2.grid(row=6, column = 1,  columnspan=2, padx=(50,50), pady=10, sticky= "WE")
-        # FITTING
+
+        # Fitting sample Combobox
         self.var_fitter = tkinter.IntVar() 
         self.combo_fitter = tkinter.ttk.Combobox(self.frame_controls, width=5, textvariable= self.var_fitter, state= "readonly")
         self.combo_fitter["values"] = [""]
         self.combo_fitter.current(0) # Fills the combobox with nothing. Otherwise default value on creation is "0".
         self.combo_fitter.grid(row=7, column=1, columnspan=2, padx=(10, 10), pady=5, sticky = "WE")
         
+        # Normalization factor
         self.norm_var = tkinter.StringVar()
         self.norm_var.set('1')
         self.norm_label = tkinter.ttk.Label(self.frame_controls, width=5, text="Norm. factor:", anchor="e") # anchor="e" is right-aligned
@@ -129,18 +141,21 @@ class MainFrame(tkinter.ttk.Frame):
         def only_numbers(char):
             return char.isdigit() # Exponents, like ², are also considered to be a digit.
         validation = self.register(only_numbers)
-        self.norm_entry = tkinter.ttk.Entry(self.frame_controls, width=5, textvariable=self.norm_var,
-                                            validate="key", validatecommand=(validation, '%S'))
+        self.norm_entry = tkinter.ttk.Entry(self.frame_controls, width=5, textvariable=self.norm_var, validate="key", validatecommand=(validation, '%S'))
         self.norm_entry.grid(row=8, column=2, padx=(5, 10), pady=5, sticky="WE")
         
+        # Algorithm Combobox
         self.combo_algo = tkinter.ttk.Combobox(self.frame_controls, width=5, state= "readonly")
         self.combo_algo["values"] = ["Caffarri", "Porra"]
         self.combo_algo.current(0) # Fills the combobox with nothing. Otherwise default value on creation is "0".
         self.combo_algo.bind("<<ComboboxSelected>>", self.__onAlgoChange)
         self.combo_algo.grid(row=9, column=1, padx=(10, 5), pady=5, sticky = "WE")
-        self.button_fitter = tkinter.ttk.Button(self.frame_controls, text= "Fitting", width= 10, command= self.onFitting)
+
+        # "Fit selected" button
+        self.button_fitter = tkinter.ttk.Button(self.frame_controls, text= "Fit selected", width= 10, command= self.onFitting)
         self.button_fitter.grid(row=9, column=2, padx=(5,10), pady=5)
-        # FITTING RESULTS
+
+        # Fitting results
         self.frame_results = tkinter.ttk.Frame(self.frame_controls)
         self.scroll_results = tkinter.ttk.Scrollbar(self.frame_results, orient="vertical")
         self.text_results = tkinter.Text(self.frame_results, height=7, width=10, yscrollcommand= self.scroll_results.set, state="disabled")
@@ -149,13 +164,16 @@ class MainFrame(tkinter.ttk.Frame):
         self.scroll_results.pack(side="right", fill="y")
         self.text_results.pack(side="left", fill="both", expand=1)
         self.frame_results.grid(row=10, column = 1, columnspan=2, padx=(10, 10), pady=5, sticky = "WE")
-        # SAVE
-        self.button_save = tkinter.ttk.Button(self.frame_controls, text ="Save...", width = 10, command = self.onSave)
+        
+        # "Fit all & Save" button
+        self.button_save = tkinter.ttk.Button(self.frame_controls, text ="Fit all & Save", width = 10, command = self.onSave)
         self.button_save.grid(row=11, column = 1,  padx=(10,5), pady=(5))
-        # HIDE
+        
+        # "Hide" button
         self.button_hide = tkinter.ttk.Button(self.frame_controls, text ="Hide", width = 10, command= self.onHide)
         self.button_hide.grid(row=11, column = 2,  padx=(5,10), pady=(5))
         self.button_hide["state"] = "disabled"
+        
         # STATUS BAR / PROGRESS BAR
         self.string_status = tkinter.StringVar()
         self.label_status = tkinter.ttk.Label(self.frame_controls,  width=10, textvariable= self.string_status)
