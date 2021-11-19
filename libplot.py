@@ -4,7 +4,7 @@ import tkinter, tkinter.font, platform
 class ObjPlot(tkinter.Canvas):
     
     
-    def __init__(self, root, title = "",
+    def __init__(self, root, title = "", subtitle = "",
                  pixelWidth = 500, pixelHeight = 200, # pixels
                  beginX = 350, endX = 750,
                  beginY = 0, endY = 1,
@@ -15,6 +15,7 @@ class ObjPlot(tkinter.Canvas):
         
         # Variables passed
         self.title = title
+        self.subtitle = subtitle
         self.pixelWidth = pixelWidth
         self.pixelHeight = pixelHeight
         self.beginX = beginX
@@ -226,6 +227,8 @@ class ObjPlot(tkinter.Canvas):
         
         # Create title
         self.create_text(self.pixelWidth //2 , self.span //3, anchor='n', text= self.title, font = self.font_bold)
+        # Create subtitle (15 pixels below the title)
+        self.create_text(self.pixelWidth //2 , self.span //3  +15, anchor='n', text= self.subtitle)
         
         # Create X line     
         self.create_line(self.span, self.span + self.lengthY,

@@ -3,6 +3,7 @@ from libmatrix import ObjMatrix
 import libleasts
 import webbrowser, platform, csv, copy, tkinter, tkinter.messagebox, tkinter.font
 import pylightxl as xl
+import math, statistics
 
 
 
@@ -201,7 +202,7 @@ def loadXLSX(file):
 def saveCSV(datasets, standards, algo, file_path, progress):
         
     file = open(file_path, "w")
-    header = ["Sample", "Chl a/b", "Chl/Car", "Chl [uM]", "Car [uM]", "Chl a [uM]", "Chl b [uM]", 
+    header = ["Sample", "Goodness", "Chl a/b", "Chl/Car", "Chl [uM]", "Car [uM]", "Chl a [uM]", "Chl b [uM]", 
               "Beta 80 [uM]", "Lute 80 [uM]", "Neo 80 [uM]", "Viola 80 [uM]", "Zea 80 [uM]",
               "Chl a 70 [uM]", "Chl a 90 [uM]", "Chl b 70 [uM]", "Chl b 90 [uM]"]
     writer = csv.DictWriter(file, fieldnames= header)  
@@ -216,8 +217,14 @@ def saveCSV(datasets, standards, algo, file_path, progress):
         chl_conc, chl_fit = compsAdder(chl_concents[0:4], chl_comps[0:4], "Chl fit")
         car_concents, car_comps = fitterCar(dataset, standards, chl_fit, algo)
         car_conc, car_fit = compsAdder(car_concents[0:5], car_comps[0:5], "Car fit")
+        # choosen_subtracted = dataset.subtract(chl_fit) # doesn't matter here.
+        tot_conc, tot_fit = compsAdder([chl_conc, car_conc], [chl_fit, car_fit], "Total fit")
+
+        # calculate the goodness of the fit:
+        goodness = calculateFttingError(dataset, tot_fit)
+
                                                  
-        writer.writerow({"Sample" : dataset.label, "Chl a/b": round(chl_a_conc/chl_b_conc, 3),
+        writer.writerow({"Sample" : dataset.label, "Goodness": goodness, "Chl a/b": round(chl_a_conc/chl_b_conc, 3),
                          "Chl/Car": round(chl_conc/car_conc, 3), "Chl [uM]": round(chl_conc, 3),
                          "Car [uM]": round(car_conc, 3), "Chl a [uM]": round(chl_a_conc, 3),
                          "Chl b [uM]": round(chl_b_conc, 3), "Beta 80 [uM]": round(car_concents[0], 3),
@@ -238,11 +245,14 @@ def saveXLSX(datasets, standards, algo, file_path, progress, norm):
     db.add_ws(ws="chlorocarfitter") # add a blank worksheet to the pylightxl-db
     
     # write the header:
-    header = ["Sample", "Chl/Car", "Chl a/b", 
+    header = ["Sample", "Goodness",
+              "", # skip one column
+              "Chl/Car", "Chl a/b", 
+              "", # skip one column
               # raw concetrations:
-              "Chl [uM]", "Car [uM]", "Chl a [uM]", "Chl b [uM]", 
+              "Chl a [uM]", "Chl b [uM]", "Car [uM]", 
               "Beta 80 [uM]", "Lute 80 [uM]", "Neo 80 [uM]", "Viola 80 [uM]", "Zea 80 [uM]",
-              "Chl a 70 [uM]", "Chl a 90 [uM]", "Chl b 70 [uM]", "Chl b 90 [uM]",
+              # "Chl a 70 [uM]", "Chl a 90 [uM]", "Chl b 70 [uM]", "Chl b 90 [uM]", # not so useful for the final user!
               # normalized values:
               "", # skip one column
               "Norm Chl a [uM]", "Norm Chl b [uM]", "Norm Car [uM]",
@@ -260,13 +270,20 @@ def saveXLSX(datasets, standards, algo, file_path, progress, norm):
         chl_conc, chl_fit = compsAdder(chl_concents[0:4], chl_comps[0:4], "Chl fit")
         car_concents, car_comps = fitterCar(dataset, standards, chl_fit, algo)
         car_conc, car_fit = compsAdder(car_concents[0:5], car_comps[0:5], "Car fit")
+        # choosen_subtracted = dataset.subtract(chl_fit) # doesn't matter here.
+        tot_conc, tot_fit = compsAdder([chl_conc, car_conc], [chl_fit, car_fit], "Total fit")
+
+        # calculate the goodness of the fit:
+        goodness = calculateFttingError(dataset, tot_fit)
                                                  
-        samplerow = [dataset.label, round(chl_conc/car_conc, 3), round(chl_a_conc/chl_b_conc, 3),
+        samplerow = [dataset.label, goodness, 
+               "", # skip one column
+               round(chl_conc/car_conc, 3), round(chl_a_conc/chl_b_conc, 3),
+               "", # skip one column
                # raw concetrations:
-               round(chl_conc, 3), round(car_conc, 3), round(chl_a_conc, 3), round(chl_b_conc, 3),
-               round(car_concents[0], 3), round(car_concents[1], 3), round(car_concents[2], 3),
-               round(car_concents[3], 3), round(car_concents[4], 3), round(chl_concents[0], 3),
-               round(chl_concents[1], 3), round(chl_concents[2], 3), round(chl_concents[3], 3),
+               round(chl_a_conc, 3), round(chl_b_conc, 3), round(car_conc, 3), 
+               round(car_concents[0], 3), round(car_concents[1], 3), round(car_concents[2], 3), round(car_concents[3], 3), round(car_concents[4], 3), 
+               # round(chl_concents[0], 3), round(chl_concents[1], 3), round(chl_concents[2], 3), round(chl_concents[3], 3), # not so useful for the final user!
                # normalized values:
                "", # skip one column
                round(norm * chl_a_conc /(chl_a_conc + chl_b_conc), 3), 
@@ -475,3 +492,21 @@ def calculateCaffarriEq(sample):
     return round(Cchla_ug, 3), round(Cchlb_ug,3), round(Cchla_nmol, 3), round(Cchlb_nmol,3)
     
     
+def calculateFttingError(measured, fitted):
+
+    # Assume that datasets have the same length (4000, by construction):
+    # So len(measured.y) is equal to len(fitted.y).
+    # Here we want to calculate the 1-RSE (relative squared error).
+    # 1-RSE = 1 - sqrt(sum((yAi - yBi)^2)/sum((yAi - mean(yA))^2))
+    # Where A is "measeured" and B is "fitted"
+
+    sum_e = 0.0
+    sum_m = 0.0
+    mean_measured = statistics.mean(measured.y)
+    for i in range(0, len(measured.x)):
+        sum_e += (measured.y[i] - fitted.y[i])**2
+        sum_m += (measured.y[i] - mean_measured)**2
+
+    RSE = math.sqrt(sum_e / sum_m)
+    
+    return round(1.0 - RSE, 5) 

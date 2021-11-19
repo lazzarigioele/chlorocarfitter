@@ -6,7 +6,7 @@ def resourcePath(relative_path):
 
 from libplot import ObjPlot
 from libcoord import ObjCoord
-from libfuncs import parseMD, loadCSV, loadXLSX, saveCSV, saveXLSX, fitterChl, fitterCar, compsAdder, calculatePorraEq, calculateCaffarriEq
+from libfuncs import parseMD, loadCSV, loadXLSX, saveCSV, saveXLSX, fitterChl, fitterCar, compsAdder, calculatePorraEq, calculateCaffarriEq, calculateFttingError
 import tkinter, tkinter.font, tkinter.ttk, tkinter.filedialog
 import platform, copy, sys, os, datetime
 
@@ -329,6 +329,7 @@ class MainFrame(tkinter.ttk.Frame):
         self.doComboManipulations()
         
         self.p1.title = ""
+        self.p1.subtitle = ""
         self.p1.cleanPlot()
         my_selection = self.list_file.curselection() 
         for i in my_selection:
@@ -407,8 +408,13 @@ class MainFrame(tkinter.ttk.Frame):
         tot_conc, tot_fit = compsAdder([chl_conc, car_conc], [chl_fit, car_fit], "Total fit", color = "brown")
         
 
+        # calculate the goodness of the fit:
+        goodness = calculateFttingError(choosen, tot_fit)
+
+
         # clean and fill p1
         self.p1.title = "Total fit"
+        self.p1.subtitle = "Goodness: " + str(goodness)
         self.p1.cleanPlot()
         self.p1.loadLine(choosen)
         self.p1.loadLine(chl_a_comp)
@@ -457,7 +463,7 @@ class MainFrame(tkinter.ttk.Frame):
         self.text_results.tag_config('raw', foreground='dark violet')
         self.text_results.tag_config('norm', foreground='deep pink')
 
-        self.string_status.set("Fit finished!")
+        self.string_status.set("Fit finished! Goodness: " + str(goodness))
         
         
         
@@ -582,7 +588,7 @@ def resize_handler():
 
 #if __name__ == "__main__":
 root = tkinter.Tk()
-root.title("chlorocarfitter v1.2")
+root.title("chlorocarfitter v1.3")
 icon = tkinter.Image(imgtype = "photo", file= resourcePath("icons/icon_chlorocarfitter.gif"))
 root.iconphoto(True, icon) # default = True
 main = MainFrame(root)
