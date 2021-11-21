@@ -322,6 +322,10 @@ class MainFrame(tkinter.ttk.Frame):
     def onPlot(self):
 
         self.onHide()
+
+        if self.datasets_backup == []:
+            self.string_status.set("First load samples!")
+            return
         
         self.string_status.set("Plotting..."); self.label_status.update_idletasks()
         
