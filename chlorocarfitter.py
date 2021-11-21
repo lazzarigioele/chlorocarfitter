@@ -96,7 +96,7 @@ class MainFrame(tkinter.ttk.Frame):
         # Listbox
         self.frame_file = tkinter.ttk.Frame(self.frame_controls)
         self.scroll_file = tkinter.ttk.Scrollbar(self.frame_file, orient="vertical")
-        self.list_file = tkinter.Listbox(self.frame_file, height = 7, selectmode = "multiple", exportselection=False, yscrollcommand= self.scroll_file.set, borderwidth=0)
+        self.list_file = tkinter.Listbox(self.frame_file, height = 5, selectmode = "multiple", exportselection=False, yscrollcommand= self.scroll_file.set, borderwidth=0)
         self.scroll_file.config(command= self.list_file.yview)
         self.scroll_file.pack(side="right", fill="y")
         self.list_file.pack(side="left", fill="both", expand=1)
@@ -158,7 +158,7 @@ class MainFrame(tkinter.ttk.Frame):
         # Fitting results
         self.frame_results = tkinter.ttk.Frame(self.frame_controls)
         self.scroll_results = tkinter.ttk.Scrollbar(self.frame_results, orient="vertical")
-        self.text_results = tkinter.Text(self.frame_results, height=7, width=10, yscrollcommand= self.scroll_results.set, state="disabled")
+        self.text_results = tkinter.Text(self.frame_results, height=13, width=10, yscrollcommand= self.scroll_results.set, state="disabled")
         self.text_results.configure(font="TkTextFont")
         self.scroll_results.config(command= self.text_results.yview)
         self.scroll_results.pack(side="right", fill="y")
@@ -436,32 +436,38 @@ class MainFrame(tkinter.ttk.Frame):
         self.p2.loadLine(car_fit)
         for i in range(len(car_comps)): self.p2.loadLine(car_comps[i])
         self.p2.updatePlot()
-        
+
 
         # clean and fill text_results
         self.text_results.configure(state="normal") # Enables the Text widget to be programmatically filled.
         self.text_results.delete("1.0", "end")
-        self.text_results.insert("end", choosen.label + " report: \n\n", "title")
-        self.text_results.insert("end", "Chl a/b: " + str(round(chl_a_conc/chl_b_conc, 3)) + "\n")
-        self.text_results.insert("end", "Chl/Car: " + str(round(chl_conc/car_conc, 3)) + "\n\n")
+        self.text_results.insert("end", choosen.label + " report: \n\n", "norm")
+        self.text_results.insert("end", "Chl", "norm", " a", "chla", "/", "norm", "b: ", "chlb", str(round(chl_a_conc/chl_b_conc, 3)) + "\n", "norm")
+        self.text_results.insert("end", "Chl", "chl", "/", "norm", "Car: ", "car", str(round(chl_conc/car_conc, 3)) + "\n", "norm")
         # Raw concentrations
-        self.text_results.insert("end", "Raw concentrations: \n\n", "raw")
-        self.text_results.insert("end", "Chl a [uM]: ", "raw", str(round(chl_a_conc, 3)) + "\n")
-        self.text_results.insert("end", "Chl b [uM]: ", "raw", str(round(chl_b_conc, 3)) + "\n\n")
-        self.text_results.insert("end", "Chl [uM]: ", "raw", str(round(chl_conc, 3)) + "\n")
-        self.text_results.insert("end", "Car [uM]: ", "raw", str(round(car_conc, 3)) + "\n\n")
-        for i in range(len(chl_comps)): self.text_results.insert("end", chl_comps[i].label + " [uM]: ", "raw", str(round(chl_concents[i], 3)) + "\n")
-        for i in range(len(car_comps)): self.text_results.insert("end", car_comps[i].label + " [uM]: ", "raw", str(round(car_concents[i], 3)) + "\n")
+        # self.text_results.insert("end", "Raw concentrations: \n", "raw")
+        self.text_results.insert("end", "Chl a [uM]: ", "chla", str(round(chl_a_conc, 3)) + "\n", "norm")
+        self.text_results.insert("end", "Chl b [uM]: ", "chlb", str(round(chl_b_conc, 3)) + "\n", "norm")
+        self.text_results.insert("end", "Chl [uM]: ", "chl", str(round(chl_conc, 3)) + "\n", "norm")
+        self.text_results.insert("end", "Car [uM]: ", "car", str(round(car_conc, 3)) + "\n", "norm")
+        for i in range(len(car_comps)): self.text_results.insert("end", car_comps[i].label + " [uM]: ", car_comps[i].color, str(round(car_concents[i], 3)) + "\n", "norm")
+        for i in range(len(chl_comps)): self.text_results.insert("end", chl_comps[i].label + " [uM]: ", chl_comps[i].color, str(round(chl_concents[i], 3)) + "\n", "norm")
         # Normalized values
         self.text_results.insert("end", "\nNormalized values: \n\n", "norm")
-        self.text_results.insert("end", "Chl a: ", "norm", str(round(norm * chl_a_conc /(chl_a_conc + chl_b_conc), 3)) + "\n")
-        self.text_results.insert("end", "Chl b: ", "norm", str(round(norm * chl_b_conc /(chl_a_conc + chl_b_conc), 3)) + "\n")
-        self.text_results.insert("end", "Car: ", "norm", str(round(norm * car_conc /(chl_a_conc + chl_b_conc), 3)) + "\n\n")
-        for i in range(len(car_comps)): self.text_results.insert("end", car_comps[i].label + ": ", "norm", str(round(norm * car_concents[i] /(chl_a_conc + chl_b_conc), 3)) + "\n")
+        self.text_results.insert("end", "Chl a: ", "chla", str(round(norm * chl_a_conc /(chl_a_conc + chl_b_conc), 3)) + "\n", "norm")
+        self.text_results.insert("end", "Chl b: ", "chlb", str(round(norm * chl_b_conc /(chl_a_conc + chl_b_conc), 3)) + "\n", "norm")
+        self.text_results.insert("end", "Car: ", "car", str(round(norm * car_conc /(chl_a_conc + chl_b_conc), 3)) + "\n", "norm")
+        for i in range(len(car_comps)): self.text_results.insert("end", car_comps[i].label + ": ", car_comps[i].color, str(round(norm * car_concents[i] /(chl_a_conc + chl_b_conc), 3)) + "\n")
         
         self.text_results.configure(state= "disabled") # Prevent the user to edit the text.
-        self.text_results.tag_config('raw', foreground='dark violet')
-        self.text_results.tag_config('norm', foreground='deep pink')
+        # Define style for every tag:
+        self.text_results.tag_config('norm', foreground='black')
+        self.text_results.tag_config('chla', foreground='SteelBlue4')
+        self.text_results.tag_config('chlb', foreground='green4')
+        self.text_results.tag_config('chl', foreground='DarkOliveGreen3')
+        self.text_results.tag_config('car', foreground='tomato')
+        for i in range(len(car_comps)): self.text_results.tag_config(car_comps[i].color, foreground=car_comps[i].color)
+        for i in range(len(chl_comps)): self.text_results.tag_config(chl_comps[i].color, foreground=chl_comps[i].color); print(chl_comps[i].color)
 
         self.string_status.set("Fit finished! Goodness: " + str(goodness))
         
@@ -478,7 +484,7 @@ class MainFrame(tkinter.ttk.Frame):
         self.text_results.delete("1.0", "end")
         
         choosen = self.datasets[self.combo_fitter.current()]
-        self.text_results.insert("end", choosen.label + ": \n")
+        self.text_results.insert("end", choosen.label + " report: \n") 
         
         Cchla_ug, Cchlb_ug, Cchla_nmol, Cchlb_nmol = calculatePorraEq(choosen)
         self.text_results.insert("end", "\nWith ug/uL concents:\n\n")
@@ -506,7 +512,7 @@ class MainFrame(tkinter.ttk.Frame):
         self.text_results.delete("1.0", "end")
         
         choosen = self.datasets[self.combo_fitter.current()]
-        self.text_results.insert("end", choosen.label + ": \n")
+        self.text_results.insert("end", choosen.label + " report: \n")
         
         Cchla_ug, Cchlb_ug, Cchla_nmol, Cchlb_nmol = calculateCaffarriEq(choosen)
         self.text_results.insert("end", "\nWith ug/uL concents:\n\n")

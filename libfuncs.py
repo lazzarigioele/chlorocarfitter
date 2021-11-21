@@ -364,7 +364,7 @@ def fitterChl(dataset, standards, algo):
     comps.append(ObjCoord(chlb70_x, chlb70_y, label = chl_sub["chlb70_sub"].label, color = "chartreuse2"))
     chlb90_x = standards["chlb90"].x
     chlb90_y = [i * concents[3] / 1000000 for i in standards["chlb90"].y]
-    comps.append(ObjCoord(chlb90_x, chlb90_y, label = chl_sub["chlb90_sub"].label, color = "lime green"))
+    comps.append(ObjCoord(chlb90_x, chlb90_y, label = chl_sub["chlb90_sub"].label, color = "green3"))
         
     return concents, comps
 
