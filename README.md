@@ -48,11 +48,15 @@ If selected, option "720z.+ red" will zero all the samples at 720nm, and then no
 
 ### Executing the fit
 
-If selected, option "Caffarri fit" enable a fitting using the Non-Negative Least Squares algorithm, in the classic version of Lawson-Hanson. Clicking on "Fit selected" will show up the pigments' concentrations in uM. Pigments considered are: Chl a, Chl b,  Chl (total cholorophyll), Beta80 (beta-carotene), Lute80 (lutein), Neo80 (neoxanthin), Viola80 (violaxanthin), Zea80 (zeaxanthin). Chl a/b and Chl/Car ratios are also provided. Clicking on "Fit selected" will also show up the graphical spectrum decomposition. Normalized values are displayed in the lower part of the report. Normalization factor `norm` is specified by the user (default: 1). Normalized values (nPigm) are calculated as follows: `nPigm` = `norm` * `Pigm [uM]` / (`Chl a [uM]` + `Chl b [uM]`). The goodness of the fit is quantified by the parameter `1-RSE` (Relative Squared Error): `1-RSE` = 1 - sqrt(sum((`yAi` - `yBi`)^2)/sum((`yAi` - mean(`yA`))^2)) where `yAi` is the measured absorption at `i`nm, and `yBi` is the fitted absorption at `i`nm (here the considered wavelengths range from 350nm to 750nm).
-
 If selected, option "Porra eq" enable the classic Porra equations. Clicking on "Calculate" will show up Chl a and Chl b concentrations both in ug/uL and in nmol/uL. A Chl a/b ratio is also displayed. With "Porra eq" the normalization factor is ignored.
 
 If selected, option "Caffarri eq" enable the new updated simultaneous equations. Clicking on "Calculate" will show up Chl a and Chl b concentrations both in ug/uL and in nmol/uL. A Chl a/b ratio is also displayed. With "Caffarri eq" the normalization factor is ignored.
+
+If selected, option "Caffarri fit" enable a fitting using the Non-Negative Least Squares algorithm, in the classic version of Lawson-Hanson. Clicking on "Fit selected" will show up the pigments' concentrations in uM. Pigments considered are: Chl a, Chl b,  Chl (total cholorophyll), Beta80 (beta-carotene), Lute80 (lutein), Neo80 (neoxanthin), Viola80 (violaxanthin), Zea80 (zeaxanthin). Chl a/b and Chl/Car ratios are also provided. Clicking on "Fit selected" will also show up the graphical spectrum decomposition. 
+
+Normalized values are displayed in the lower part of the report. Normalization factor `norm` is specified by the user (default: 1). Normalized values (nPigm) are calculated as follows: `nPigm` = `norm` * `Pigm [uM]` / (`Chl a [uM]` + `Chl b [uM]`). 
+
+The goodness of the fit is quantified by the parameter `1-RSE` (Relative Squared Error): `1-RSE` = 1 - sqrt(sum((`yAi` - `yBi`)^2)/sum((`yAi` - mean(`yA`))^2)) where `yAi` is the measured absorption at `i`nm, and `yBi` is the fitted absorption at `i`nm (here the considered wavelengths range from 350nm to 750nm). The goodness parameter ranges from 0 to 1 (perfect fit).
 
 ### Saving the results
 

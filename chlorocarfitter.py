@@ -467,7 +467,7 @@ class MainFrame(tkinter.ttk.Frame):
         self.text_results.tag_config('chl', foreground='DarkOliveGreen3')
         self.text_results.tag_config('car', foreground='tomato')
         for i in range(len(car_comps)): self.text_results.tag_config(car_comps[i].color, foreground=car_comps[i].color)
-        for i in range(len(chl_comps)): self.text_results.tag_config(chl_comps[i].color, foreground=chl_comps[i].color); print(chl_comps[i].color)
+        for i in range(len(chl_comps)): self.text_results.tag_config(chl_comps[i].color, foreground=chl_comps[i].color)
 
         self.string_status.set("Fit finished! Goodness: " + str(goodness))
         
