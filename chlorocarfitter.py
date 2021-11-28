@@ -414,11 +414,13 @@ class MainFrame(tkinter.ttk.Frame):
 
         # calculate the goodness of the fit:
         goodness = calculateFttingError(choosen, tot_fit)
+        goodness_red = goodness[0]
+        goodness_blue = goodness[1]
 
 
         # clean and fill p1
         self.p1.title = "Total fit"
-        self.p1.subtitle = "Goodness: " + str(goodness)
+        self.p1.subtitle = "Fit quality: blue " + str(goodness_blue) +" ; red "+ str(goodness_red)
         self.p1.cleanPlot()
         self.p1.loadLine(choosen)
         self.p1.loadLine(chl_a_comp)
@@ -473,7 +475,7 @@ class MainFrame(tkinter.ttk.Frame):
         for i in range(len(car_comps)): self.text_results.tag_config(car_comps[i].color, foreground=car_comps[i].color)
         for i in range(len(chl_comps)): self.text_results.tag_config(chl_comps[i].color, foreground=chl_comps[i].color)
 
-        self.string_status.set("Fit finished! Goodness: " + str(goodness))
+        self.string_status.set("Fit finished!")
         
         
         
@@ -598,7 +600,7 @@ def resize_handler():
 
 #if __name__ == "__main__":
 root = tkinter.Tk()
-root.title("chlorocarfitter v1.3")
+root.title("chlorocarfitter v1.4")
 icon = tkinter.Image(imgtype = "photo", file= resourcePath("icons/icon_chlorocarfitter.gif"))
 root.iconphoto(True, icon) # default = True
 main = MainFrame(root)

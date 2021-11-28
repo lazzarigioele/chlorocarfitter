@@ -245,7 +245,7 @@ def saveXLSX(datasets, standards, algo, file_path, progress, norm):
     db.add_ws(ws="chlorocarfitter") # add a blank worksheet to the pylightxl-db
     
     # write the header:
-    header = ["Sample", "Goodness",
+    header = ["Sample", "FitQual_Blue", "FitQual_Red",
               "", # skip one column
               "Chl/Car", "Chl a/b", 
               "", # skip one column
@@ -275,8 +275,10 @@ def saveXLSX(datasets, standards, algo, file_path, progress, norm):
 
         # calculate the goodness of the fit:
         goodness = calculateFttingError(dataset, tot_fit)
+        goodness_red = goodness[0]
+        goodness_blue = goodness[1]
                                                  
-        samplerow = [dataset.label, goodness, 
+        samplerow = [dataset.label, goodness_blue, goodness_red,
                "", # skip one column
                round(chl_conc/car_conc, 3), round(chl_a_conc/chl_b_conc, 3),
                "", # skip one column
@@ -311,18 +313,24 @@ def saveXLSX(datasets, standards, algo, file_path, progress, norm):
 
 def redSubsetter(dataset):
     
-    left_red1 = dataset.x.index(615.0)   
-    right_red1 = dataset.x.index(625.0) 
-    subset_red1_nm = dataset.x[left_red1 : right_red1]
-    subset_red1_au = dataset.y[left_red1 : right_red1]
-    left_red2 = dataset.x.index(635.0)   
-    right_red2 = dataset.x.index(650.0) 
-    subset_red2_nm = dataset.x[left_red2 : right_red2]
-    subset_red2_au = dataset.y[left_red2 : right_red2]
+    # select lower en upper value (from 615.2-625.2) as described in manuscript:
+    left_red1 = dataset.x.index(615.2)   
+    right_red1 = dataset.x.index(625.6) # right end not included!
+    subset_red1_nm = dataset.x[left_red1 : right_red1 : 4] # take 0.4nm interval
+    subset_red1_au = dataset.y[left_red1 : right_red1 : 4]
+
+    # select lower en upper value (from 635.6-650) as described in manuscript:
+    left_red2 = dataset.x.index(635.6)   
+    right_red2 = dataset.x.index(650.4) # right end not included!
+    subset_red2_nm = dataset.x[left_red2 : right_red2 : 4] # take 0.4nm interval
+    subset_red2_au = dataset.y[left_red2 : right_red2 : 4]
+
+    # select lower en upper value (from 656-680) as described in manuscript:
     left_red3 = dataset.x.index(656.0)   
-    right_red3 = dataset.x.index(680.0) 
-    subset_red3_nm = dataset.x[left_red3 : right_red3]
-    subset_red3_au = dataset.y[left_red3 : right_red3]
+    right_red3 = dataset.x.index(680.4) # right end not included!
+    subset_red3_nm = dataset.x[left_red3 : right_red3 : 4] # take 0.4nm interval
+    subset_red3_au = dataset.y[left_red3 : right_red3 : 4]
+
     subset_red_nm = subset_red1_nm + subset_red2_nm + subset_red3_nm
     subset_red_au = subset_red1_au + subset_red2_au + subset_red3_au
     return ObjCoord(x = subset_red_nm, y = subset_red_au, label = dataset.label)
@@ -392,9 +400,9 @@ def blueSubsetter(dataset):
     subset_blue_nm = subset_blue1_nm + subset_blue2_nm + subset_blue3_nm + subset_blue4_nm
     subset_blue_au = subset_blue1_au + subset_blue2_au + subset_blue3_au + subset_blue4_au
     """
-    # select lower en upper value (from 409.6 to 520)
+    # select lower en upper value (from 409.6 to 520) as described in manuscript:
     left_blue = dataset.x.index(409.6)
-    right_blue = dataset.x.index(520.8)
+    right_blue = dataset.x.index(520.8) # right end not included!
     # take 0.8nm interval
     subset_blue_nm = dataset.x[left_blue : right_blue : 8]
     subset_blue_au = dataset.y[left_blue: right_blue : 8] 
@@ -496,6 +504,9 @@ def calculateFttingError(measured, fitted):
 
     # Assume that datasets have the same length (4000, by construction):
     # So len(measured.y) is equal to len(fitted.y).
+
+    # Below the old version of the goodness:
+    """
     # Here we want to calculate the 1-RSE (relative squared error).
     # 1-RSE = 1 - sqrt(sum((yAi - yBi)^2)/sum((yAi - mean(yA))^2))
     # Where A is "measeured" and B is "fitted"
@@ -510,3 +521,37 @@ def calculateFttingError(measured, fitted):
     RSE = math.sqrt(sum_e / sum_m)
     
     return round(1.0 - RSE, 5) 
+    """
+
+    # Below the new version of the goodness:
+
+    # Extract the red fitting region and the blue fitting region:
+    measured_red = redSubsetter(measured)
+    measured_blue = blueSubsetter(measured)
+    fitted_red = redSubsetter(fitted)
+    fitted_blue = blueSubsetter(fitted)
+
+    # Here we want to calculate the normalized RMSE (root mean square error).
+    # NRMSE = sqrt(sum((yAi - yBi)^2)/n)/mean(yA)
+    # Where A is "measeured" and B is "fitted", n the number of points used for the fit.
+    def NRMSE(meas, fit):
+        sum_e = 0.0 
+        mean_measured = statistics.mean( [ i*1000000 for i in meas.y ])
+        for i in range(0, len(meas.x)):
+            sum_e += (meas.y[i]*1000000 - fit.y[i]*1000000)**2
+
+        # Now sum_e is equal to the Excel "square function minimised by solver"
+        # (slightly different values are possible due to system's approximations)
+
+        nrmse = math.sqrt(sum_e / len(meas.x)) / mean_measured
+        # please note: len(meas.x) is constant: 124 for chls, 139 for cars.
+        return nrmse
+
+    # Since the RMSE value is very low, we chose to multiply by 500 (for Chls) and 
+    # 200 (for Cars) to have number in the range of 1-2 for good fit and >3 for bad fit.
+    # We report a similar message as the excel ("good fit < 2; bad fit > 3 --> check").
+    goodness_red = round(NRMSE(measured_red, fitted_red) * 500, 2)
+    goodness_blue = round(NRMSE(measured_blue, fitted_blue) * 200, 2)
+
+    return goodness_red, goodness_blue
+    

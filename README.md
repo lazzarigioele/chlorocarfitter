@@ -1,6 +1,6 @@
 This is chlorocarfitter, a tool for the quantification of pigments in acetonic solution. It's available for Windows, MacOS, and Linux. What follows gives you a brief description of its usage. 
 
-![screenshot-v1.0.png](icons/screenshot-v1.3.png)
+![screenshot-v1.4.png](icons/screenshot-v1.4.png)
 
 ### Installing
 
@@ -56,11 +56,11 @@ If selected, option "Caffarri fit" enable a fitting using the Non-Negative Least
 
 Normalized values are displayed in the lower part of the report. Normalization factor `norm` is specified by the user (default: 1). Normalized values (nPigm) are calculated as follows: `nPigm` = `norm` * `Pigm [uM]` / (`Chl a [uM]` + `Chl b [uM]`). 
 
-The goodness of the fit is quantified by the parameter `1-RSE` (Relative Squared Error): `1-RSE` = 1 - sqrt(sum((`yAi` - `yBi`)^2)/sum((`yAi` - mean(`yA`))^2)) where `yAi` is the measured absorption at `i`nm, and `yBi` is the fitted absorption at `i`nm (here the considered wavelengths range from 350nm to 750nm). The goodness parameter ranges from 0 to 1 (perfect fit).
+The quality (`Q`) of the fit is quantified by two parameters, one for the red region and one for the blue region. They are both based on the normalized root mean square error (RMSE), multiplied by a scaling factor (`s`). The overall equation is `Q` = sqrt(sum((`yAi` - `yBi`)^2)/`n`)/mean(`yA`)*`s` where `yAi` is the measured absorption at `i`nm, and `yBi` is the fitted absorption at `i`nm. `n` is the total number of wavelengths considered for that region (red or blue). Here the considered wavelengths' ranges are those used in the fitting procedure (more info on the manuscript). `s` is 500 for the red region and 200 for the blue region. This allow both the quality parameters to range 1-2 for a good fit and >3 for a bad fit. We suggest to visually inspect the fits with at least one of the quality parameters >3.
 
 ### Saving the results
 
-The button 'Fit all & Save' automatically fits all the different samples using the algorithm specified, and saves the results in an Excel file. Here, the normalized values are shown in the rightmost part of the table. 
+The button 'Fit all & Save' automatically fits all the different samples using the algorithm specified, and saves the results in an Excel file. Here, the normalized values are shown in the rightmost part of the table, while the quality parameters in the leftmost.
 
 ### Bugs and future versions
 
