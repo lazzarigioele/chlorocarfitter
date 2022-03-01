@@ -2,7 +2,7 @@ This is chlorocarfitter, a tool for the quantification of pigments in acetonic s
 
 ![screenshot-v1.4.png](icons/screenshot-v1.4.png)
 
-### Installing
+## Installing
 
 Go to <www.github.com/lazzarigioele/chlorocarfitter/releases> and selected the executable according to your operating system. Windows 10+, MacOS 11+, and Ubuntu 18+ are supported (64bit version). Double-click on the executable to open the application. 
 
@@ -10,7 +10,7 @@ Note 1: on MacOS you could see the message "cannot be opened because the develop
 
 Note 2: on Ubuntu the bin file should start with a double-click. Anyway, you could have to mark the .bin file as "executable" (`chmod +x chlorocarfitter-vX.X-Ubuntu18.bin`) and then launch it from the command line (`./chlorocarfitter-vX.X-Ubuntu18.bin`). Replace `vX.X` with your version. 
 
-### Loading of samples
+## Loading of samples
 
 First, click on "Load dataset" to load an Excel file or a `.csv` file containing all your samples. Excel files must have the `.xlsx` extension (Excel 2007 and newer). The file to load must contain the wavelengths in the first column, followed by all the individual samples. The first row must contain the labels. Do not include spectroscopy blanks into this file. The `testfiles` folder in GitHub contains several `.csv` and `.xlsx` example files to test Chlorocarfitter. 
 
@@ -36,17 +36,17 @@ We recommend a spectrum from 350-750nm with 0.4nm interval steps. However, the p
 
 Subsequent loading of a new file will first clear the program memory. You can click on the "Clear all" button to manually clear the memory. 
 
-### Visualization of samples
+## Visualization of samples
 
 Once loaded, samples names are displayed in list. You can select as many samples as you want and that click con "Plot selected" to show them. You can zoom in by dragging a rectangle over the area of interest. Zooming out occurs by a right-click on your mouse. A double right-click cleans-up the canvas.
 
-### Zeroing of samples
+## Zeroing of samples
 
 If selected, option "720zeroing" will zero all the samples at 720nm.
 
 If selected, option "720z.+ red" will zero all the samples at 720nm, and then normalize them on the red peack, which means that the maximum absorbance on the red region will be 1a.u.
 
-### Executing the fit
+## Executing the fit
 
 If selected, option "Porra eq" enable the classic Porra equations. Clicking on "Calculate" will show up Chl a and Chl b concentrations both in ug/uL and in nmol/uL. A Chl a/b ratio is also displayed. With "Porra eq" the normalization factor is ignored.
 
@@ -58,20 +58,21 @@ Normalized values are displayed in the lower part of the report. Normalization f
 
 The quality (`Q`) of the fit is quantified by two parameters, one for the red region and one for the blue region. They are both based on the normalized root mean square error (RMSE), multiplied by a scaling factor (`s`). The overall equation is `Q` = sqrt(sum((`yAi` - `yBi`)^2)/`n`)/mean(`yA`)*`s` where `yAi` is the measured absorption at `i`nm, and `yBi` is the fitted absorption at `i`nm. `n` is the total number of wavelengths considered for that region (red or blue). Here the considered wavelengths' ranges are those used in the fitting procedure (more info on the manuscript). `s` is 500 for the red region and 200 for the blue region. This allow both the quality parameters to range 1-2 for a good fit and >3 for a bad fit. We suggest to visually inspect the fits with at least one of the quality parameters >3.
 
-### Saving the results
+## Saving the results
 
 The button 'Fit all & Save' automatically fits all the different samples using the algorithm specified, and saves the results in an Excel file. Here, the normalized values are shown in the rightmost part of the table, while the quality parameters in the leftmost.
 
-### Bugs and future versions
+## Bugs and future versions
 
 Bugs can be reported to <gioele.lazzari@univr.it>. Future versions of chlorocarfitter will be available at <www.github.com/lazzarigioele/chlorocarfitter/releases>.
 
-### How to cite
+## How to cite
 
-Publication in progress!
+Chazaux, M., Schiphorst, C., Lazzari, G., & Caffarri, S. (2022). Precise estimation of chlorophyll a , b and carotenoid content by deconvolution of the absorption spectrum and new simultaneous equations for Chl determination. The Plant Journal, tpj.15643. https://doi.org/10.1111/tpj.15643
+
 If you use this software in your work, remember to specify the chlorocarfitter's version, which is visible in the title bar.
 
-### Technical notes (only) for developers
+## Technical notes (only) for developers
 
 Older versions of this software used `numpy` to handle the matrix algebra underlying the spectrum decomposition, and `matplotlib` to show the plots. Anyway, this approach led to extremely heavy executables (more than 100MB) geerated with `pyinstaller` (pyinstaller.org). In order to keep small the size of the executables, Chlorocarfitter has been re-written using exclusively the Python Standard Library (so the graphing and matrix algebra methods were rewritten from scratch). Reading and writing MS spreadsheets is possible thanks to the the `pylightxl` code (pylightxl.readthedocs.io), which holds the MIT licence. 
 
