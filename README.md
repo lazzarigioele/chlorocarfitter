@@ -68,7 +68,7 @@ Bugs can be reported to <gioele.lazzari@univr.it>. Future versions of chlorocarf
 
 ## How to cite
 
-Chazaux, M., Schiphorst, C., Lazzari, G., & Caffarri, S. (2022). Precise estimation of chlorophyll a , b and carotenoid content by deconvolution of the absorption spectrum and new simultaneous equations for Chl determination. The Plant Journal, tpj.15643. https://doi.org/10.1111/tpj.15643
+Chazaux M., Schiphorst C., Lazzari G., and Caffarri S. Precise estimation of chlorophyll a, b and carotenoid content by deconvolution of the absorption spectrum and new simultaneous equations for Chl determination. The Plant Journal. March 2022. <https://doi.org/10.1111/tpj.15643>
 
 If you use this software in your work, remember to specify the chlorocarfitter's version, which is visible in the title bar.
 

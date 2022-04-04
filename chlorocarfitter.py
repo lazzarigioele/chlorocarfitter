@@ -600,7 +600,7 @@ def resize_handler():
 
 #if __name__ == "__main__":
 root = tkinter.Tk()
-root.title("chlorocarfitter v1.4")
+root.title("chlorocarfitter v1.4.1")
 icon = tkinter.Image(imgtype = "photo", file= resourcePath("icons/icon_chlorocarfitter.gif"))
 root.iconphoto(True, icon) # default = True
 main = MainFrame(root)

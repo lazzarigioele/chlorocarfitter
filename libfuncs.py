@@ -16,8 +16,8 @@ def parseMD(widget, file, top):
     link_list = []
     for line in lines:
         # title
-        if line.startswith("### "):
-            line = line.replace("### ", "")
+        if line.startswith("## "):
+            line = line.replace("## ", "")
             widget.insert("end", line)
             widget.tag_add('title', str(line_counter)+'.0', str(line_counter)+'.end')
         # code
